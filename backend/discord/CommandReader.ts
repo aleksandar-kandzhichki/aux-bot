@@ -1,21 +1,29 @@
 import { CommandReader } from "../appInterfaces/CommandReader";
-import { Command, CommandNames } from "../appInterfaces/Command";
+import { Command, CommandNames, CommandParams } from "../appInterfaces/Command";
 import { Subject } from "rxjs";
+import { Client } from "discord.js";
 
 export class DiscordCommandReader implements CommandReader {
 
+    constructor(private client: Client) {
+        this.attachCommandsListener();
+    }
+
     commands: Subject<Command> = new Subject();
 
-    parse(msg: string): Command {
-        let command: CommandNames | undefined;
-        if (msg.startsWith("summary")) command = CommandNames.summary;
+    parse(msg: string): { name: CommandNames | undefined, params: CommandParams } {
+        let commandName: CommandNames | undefined;
+        if (msg.startsWith("summary")) commandName = CommandNames.summary;
 
-        return Command.Command("ak", command, {})
+        return { name: commandName, params: {} }
     }
     attachCommandsListener(): void {
-        // ... read command from discord
-        let command: Command = new Command({ issuer: "", name: CommandNames.summary, params: {} });
-        this.commands.next(command);
-    }
+        this.client.on("message", (msg) => {
+            let { name, params } = this.parse(msg.content);
+            if (!name) return;
 
+            let command: Command = new Command({ issuer: msg.author, name, params });
+            this.commands.next(command);
+        })
+    }
 }
