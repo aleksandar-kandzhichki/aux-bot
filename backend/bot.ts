@@ -1,6 +1,8 @@
-const Discord = require('discord.js');
+import Discord from 'discord.js';
+import auth from './auth.json';
+
+
 const client = new Discord.Client();
-const auth = require('./auth.json');
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
