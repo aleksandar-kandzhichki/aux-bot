@@ -1,19 +1,21 @@
 import { CommandReader } from "../appInterfaces/CommandReader";
 import { Command, CommandNames } from "../appInterfaces/Command";
+import { Subject } from "rxjs";
 
 export class DiscordCommandReader implements CommandReader {
+
+    commands: Subject<Command> = new Subject();
+
     parse(msg: string): Command {
         let command: CommandNames | undefined;
         if (msg.startsWith("summary")) command = CommandNames.summary;
 
         return Command.Command("ak", command, {})
     }
-
-    execute(command: Command): void {
-        if (command.name == CommandNames.summary) console.log("EXECUTE SUMMARY");
-        else console.log("UNKNOWN COMMAND")
-    }
     attachCommandsListener(): void {
-        throw new Error("Method not implemented.");
+        // ... read command from discord
+        let command: Command = new Command({ issuer: "", name: CommandNames.summary, params: {} });
+        this.commands.next(command);
     }
+
 }

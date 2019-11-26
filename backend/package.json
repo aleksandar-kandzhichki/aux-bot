@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.5.1",
+    "rxjs": "^6.5.3",
     "winston": "^3.2.1"
   },
   "devDependencies": {
