@@ -12,7 +12,7 @@ export class DiscordCommandReader implements CommandReader {
 
     commands: Subject<DiscordCommand> = new Subject();
 
-    parse(msg: string): { name: CommandNames | undefined, params: CommandParams } {
+    parse(msg: string): { name: CommandNames, params: CommandParams } {
         let commandName: CommandNames | undefined;
         commandName = this.extractCommandName(msg)
 
@@ -27,15 +27,18 @@ export class DiscordCommandReader implements CommandReader {
 
         return CommandNames.unknown;
     }
+
+    isBotInvocation(msg: string): boolean {
+        return msg.startsWith("!");
+    }
+
     attachCommandsListener(): void {
         this.client.on("message", (msg) => {
-            if (!msg.content.startsWith("!")) return;
+            if (!this.isBotInvocation(msg.content)) return;
 
             let { name, params } = this.parse(msg.content);
-            if (!name) return;
-
-            console.log(`parsed command: ${name} ${params}`)
             let command: DiscordCommand = new DiscordCommand({ issuer: msg.author, name, params, channel: msg.channel });
+
             this.commands.next(command);
         })
     }
