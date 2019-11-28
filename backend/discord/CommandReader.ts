@@ -2,11 +2,13 @@ import { CommandReader } from "../appInterfaces/CommandReader";
 import { CommandNames, CommandParams } from "../appInterfaces/Command";
 import { Subject } from "rxjs";
 import { Client } from "discord.js";
-import { DiscordCommand } from "./DiscordCommand";
+import { DiscordCommand } from "./types/DiscordCommand";
 
 export class DiscordCommandReader implements CommandReader {
+    private recognizableCommands: CommandNames[];
 
-    constructor(private client: Client) {
+    constructor(private client: Client, commandNames: CommandNames[] = []) {
+        this.recognizableCommands = commandNames;
         this.attachCommandsListener();
     }
 
@@ -20,8 +22,7 @@ export class DiscordCommandReader implements CommandReader {
     }
 
     extractCommandName(msg: string): CommandNames {
-        let names = Object.values(CommandNames);
-        for (let name of names) {
+        for (let name of this.recognizableCommands) {
             if (msg.includes(name)) return name as CommandNames;
         }
 
@@ -41,5 +42,12 @@ export class DiscordCommandReader implements CommandReader {
 
             this.commands.next(command);
         })
+    }
+
+    registerCommandNames(commandNames: CommandNames[]) {
+        this.recognizableCommands = [...this.recognizableCommands, ...commandNames];
+    }
+    unregisterCommandNames(commandNames: CommandNames[]) {
+        this.recognizableCommands = this.recognizableCommands.filter(c => !commandNames.includes(c));
     }
 }

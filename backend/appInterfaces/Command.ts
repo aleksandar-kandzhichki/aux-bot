@@ -26,6 +26,7 @@ export class UnknownCommand extends Command {
 export enum CommandNames {
     summary = "summary",
     lunch = "lunch",
+    lunchFromImage = "fromimage",
     unknown = "unknown"
 }
 export interface CommandParams {
