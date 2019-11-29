@@ -8,20 +8,21 @@ export class DiscordChatHistory implements ChatHistory {
         console.log(this.clinet);
     }
 
-    getLastN(n: number, channel?: DiscordChannel): Promise<Message[]> {
-        // if(channel) channel.fetchMessages()
-        console.log(n, channel);
-        throw new Error("Method not implemented.");
+    async getLastN(n: number, channel?: DiscordChannel): Promise<Message[]> {
+        if (!!channel) return channel.fetchMessages({ limit: n }).then(m => m.array());
+        return [];
     }
     getUntilId(id: string): Promise<Message[]> {
         console.log(id);
         throw new Error("Method not implemented.");
     }
-    async getByDate(date?: Date | undefined, channel?: DiscordChannel): Promise<Message[]> {
+    async getByDate(date: Date = new Date(), channel?: DiscordChannel): Promise<Message[]> {
         console.log(date);
-        if (!!channel) return channel.fetchMessages().then(m => m.array())
+        if (!!channel) return channel.fetchMessages().then(m => m.array().filter(el => this.isSameDay(el.createdAt, date)))
         return [];
     }
 
-
+    private isSameDay(d1: Date, d2: Date) {
+        return d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth() && d1.getFullYear() == d2.getFullYear()
+    }
 }

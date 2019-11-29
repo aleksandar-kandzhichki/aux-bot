@@ -15,18 +15,29 @@ export class DiscordCommandReader implements CommandReader {
     commands: Subject<DiscordCommand> = new Subject();
 
     parse(msg: string): { name: CommandNames, params: CommandParams } {
-        let commandName: CommandNames | undefined;
-        commandName = this.extractCommandName(msg)
+        const commandName = this.extractCommandName(msg)
+        const params = this.extractParams(msg);
 
-        return { name: commandName, params: {} }
+        return { name: commandName, params }
     }
 
-    extractCommandName(msg: string): CommandNames {
+    private extractCommandName(msg: string): CommandNames {
         for (let name of this.recognizableCommands) {
             if (msg.includes(name)) return name as CommandNames;
         }
 
         return CommandNames.unknown;
+    }
+    private extractParams(msg: string): CommandParams {
+        const params: CommandParams = {};
+        let slices = msg.split(" ");
+        for (let i in slices) {
+            const slice = slices[i];
+            if (slice.startsWith("--")) params[slice.slice(2)] = true;
+            else if (slice.startsWith("-")) params[slice.slice(1)] = slices[+i + 1];
+        }
+
+        return params;
     }
 
     isBotInvocation(msg: string): boolean {

@@ -6,7 +6,9 @@ export interface CommandReader {
     parse(msg: string): { name: CommandNames | undefined, params: CommandParams };
     attachCommandsListener(): void;
     isBotInvocation(msg: string): boolean;
-    extractCommandName(msg: string): CommandNames;
+
     registerCommandNames(commandNames: CommandNames[]): void;
     unregisterCommandNames(commandNames: CommandNames[]): void;
+
+    // extractCommandName(msg: string): CommandNames;
 }

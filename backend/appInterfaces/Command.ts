@@ -30,5 +30,5 @@ export enum CommandNames {
     unknown = "unknown"
 }
 export interface CommandParams {
-    [param: string]: string;
+    [param: string]: string | true;
 }
