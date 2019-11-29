@@ -18,7 +18,13 @@ discordCommands.commands.subscribe(async c => {
 
   c.channel.sendMessage("Summaryzing from messages!!!")
   let history = (await chatHistoryService.getLastN(100, c.channel)).filter(msg => !discordCommands.isBotInvocation(msg.content) && !msg.author.bot);
-  if (c.params.from) history = history.filter(msg => msg.content.includes(c.params.from as string))
+  let fromDate = new Date();
+  if (c.params.from) {
+    c.params.from = (c.params.from as string).toLowerCase();
+    history = history.filter(msg => msg.content.toLowerCase().includes(c.params.from as string))
+  }
+  if (c.params.date) fromDate = new Date(Date.parse(c.params.date as string));
+  history = history.filter(msg => isSameDay(msg.createdAt, fromDate))
   c.channel.sendMessage(`checking ${history.length} messages!`);
   return c.channel.sendMessage(history.map(msg => `${msg.member.displayName}: ${msg.content}`).join('  \n'));
 
@@ -39,5 +45,8 @@ discordCommands.commands.subscribe(async c => {
 //   let history = await chatHistoryService.getByDate(date, channel);
 //   channel.sendMessage(`checking ${history.length} messages!`);
 // }
+function isSameDay(d1: Date, d2: Date) {
+  return d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth() && d1.getFullYear() == d2.getFullYear()
+}
 
 client.login(auth.token);
