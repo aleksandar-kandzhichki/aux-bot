@@ -3,11 +3,13 @@ import auth from './auth.json';
 import { DiscordCommandReader } from './discord/CommandReader';
 import { CommandNames } from './appInterfaces/Command';
 import { DiscordChatHistory } from './discord/ChatHistory';
+import { CommandProcessor } from './bussiness/command.procesor.js';
 
 
 const client = new Discord.Client();
 const discordCommands = new DiscordCommandReader(client);
 const chatHistoryService = new DiscordChatHistory(client);
+const commandProcessor = new CommandProcessor();
 
 type processedOrder = { name: string, order: string };
 
@@ -16,6 +18,7 @@ discordCommands.commands.subscribe(async c => {
   console.log(c);
   if (c.name == CommandNames.unknown) return c.channel.sendMessage("Unrecognized command!");
   if (c.name == CommandNames.lunchFromImage) return c.channel.sendMessage("making poll from image");
+  if (c.name == CommandNames.help) return c.channel.sendMessage(commandProcessor.executeHelpCommand(c.params));
 
 
   if (c.name == CommandNames.lunch || c.name == CommandNames.summary) {
