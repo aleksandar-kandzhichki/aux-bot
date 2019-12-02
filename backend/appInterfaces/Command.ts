@@ -27,6 +27,7 @@ export enum CommandNames {
     summary = "summary",
     lunch = "lunch",
     lunchFromImage = "fromimage",
+    ignore = "ignore",
     unknown = "unknown"
 }
 export interface CommandParams {

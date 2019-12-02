@@ -18,26 +18,29 @@ discordCommands.commands.subscribe(async c => {
   if (c.name == CommandNames.lunchFromImage) return c.channel.sendMessage("making poll from image");
 
 
-  c.channel.sendMessage("Summaryzing from messages!!!")
-  let history = (await chatHistoryService.getLastN(100, c.channel)).filter(msg => !discordCommands.isBotInvocation(msg.content) && !msg.author.bot);
-  let fromDate = new Date();
-  if (c.params.from) {
-    c.params.from = (c.params.from as string).toLowerCase();
-    history = history.filter(msg => msg.content.toLowerCase().includes(c.params.from as string))
+  if (c.name == CommandNames.lunch || c.name == CommandNames.summary) {
+    c.channel.sendMessage("Summaryzing from messages!!!")
+    let history = (await chatHistoryService.getLastN(100, c.channel)).filter(msg => !discordCommands.isBotInvocation(msg.content) && !msg.author.bot);
+    let fromDate = new Date();
+    if (c.params.from) {
+      c.params.from = (c.params.from as string).toLowerCase();
+      history = history.filter(msg => msg.content.toLowerCase().includes(c.params.from as string))
+    }
+    if (c.params.date) fromDate = new Date(Date.parse(c.params.date as string));
+
+    history = history.filter(msg => isSameDay(msg.createdAt, fromDate))
+    c.channel.sendMessage(`checking ${history.length} messages... \n\n #Summary: \n\n`);
+    let lines: processedOrder[] = history.map(msg => ({ name: msg.member.displayName, order: extractOrder(msg.content, c.params.from as string)! }));
+    c.channel.sendMessage(lines.map(msg => `${msg.name}: ${msg.order}`).join('  \n'));
+    c.channel.sendMessage("\n\n # Grouping... \n\n");
+
+    let grouped = groupByOrder(lines);
+
+    c.channel.sendMessage(Object.keys(grouped).map(k => `${grouped[k]}x ${k}`).join('  \n'));
+
+    return;
   }
-  if (c.params.date) fromDate = new Date(Date.parse(c.params.date as string));
-
-  history = history.filter(msg => isSameDay(msg.createdAt, fromDate))
-  c.channel.sendMessage(`checking ${history.length} messages... \n\n #Summary: \n\n`);
-  let lines: processedOrder[] = history.map(msg => ({ name: msg.member.displayName, order: extractOrder(msg.content, c.params.from as string)! }));
-  c.channel.sendMessage(lines.map(msg => `${msg.name}: ${msg.order}`).join('  \n'));
-  c.channel.sendMessage("\n\n # Grouping... \n\n");
-
-  let grouped = groupByOrder(lines);
-
-  c.channel.sendMessage(Object.keys(grouped).map(k => `${grouped[k]}x ${k}`).join('  \n'));
-
-  return;
+  return
   // fetching messages by date with -date dateStr
   // let date: Date | undefined;
   // if (c.params.date) {
