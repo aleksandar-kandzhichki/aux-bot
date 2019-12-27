@@ -28,7 +28,9 @@ export enum CommandNames {
     lunch = "lunch",
     lunchFromImage = "fromimage",
     ignore = "ignore",
-    unknown = "unknown"
+    unknown = "unknown",
+    test = "test",
+    test2 = "proba"
 }
 export interface CommandParams {
     [param: string]: string | true;
