@@ -19,7 +19,11 @@ discordCommands.registerCommandNames(Object.values(CommandNames));
 discordCommands.commands.subscribe(async c => {
   console.log(c);
   if (c.name == CommandNames.unknown) return c.channel.sendMessage("Unrecognized command!");
-  if (c.name == CommandNames.lunchFromImage) return c.channel.sendMessage("making poll from image");
+  if (c.name == CommandNames.createPollFromURL) {
+    let meals = await commandProcessor.parseURLFoodData(c.params);
+    if(!meals) throw new Error("No meals for this link!");
+    return c.channel.sendMessage(meals.toString());
+  }
   if (c.name == CommandNames.help) return c.channel.sendMessage(commandProcessor.executeHelpCommand(c.params));
 
   if (c.name == CommandNames.test) {
