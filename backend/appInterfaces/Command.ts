@@ -30,6 +30,8 @@ export enum CommandNames {
     ignore = "ignore",
     unknown = "unknown",
     help = "help",
+    test = "test",
+    test2 = "proba"
 }
 export interface CommandParams {
     [param: string]: string | true;

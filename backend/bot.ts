@@ -4,6 +4,7 @@ import { DiscordCommandReader } from './discord/CommandReader';
 import { CommandNames } from './appInterfaces/Command';
 import { DiscordChatHistory } from './discord/ChatHistory';
 import { CommandProcessor } from './bussiness/command.procesor.js';
+import { DiscrodPolls } from './discord/DiscordPolls';
 
 
 const client = new Discord.Client();
@@ -12,6 +13,7 @@ const chatHistoryService = new DiscordChatHistory(client);
 const commandProcessor = new CommandProcessor();
 
 type processedOrder = { name: string, order: string };
+let startmsgID = '', endMsgId = '';
 
 discordCommands.registerCommandNames(Object.values(CommandNames));
 discordCommands.commands.subscribe(async c => {
@@ -20,6 +22,20 @@ discordCommands.commands.subscribe(async c => {
   if (c.name == CommandNames.lunchFromImage) return c.channel.sendMessage("making poll from image");
   if (c.name == CommandNames.help) return c.channel.sendMessage(commandProcessor.executeHelpCommand(c.params));
 
+  if (c.name == CommandNames.test) {
+    let msgs = await (new DiscrodPolls(chatHistoryService, client))
+      .createPoll({
+        "option1": { name: "option1", voteOptions: ["👍", "❓"], votes: [], messageId: '' },
+        "option2": { name: "option2", voteOptions: ["👎", "👍"], votes: [], messageId: '' }
+      }, c.channel);
+
+    startmsgID = msgs[0];
+    endMsgId = msgs[msgs.length - 1];
+  }
+
+  if (c.name == CommandNames.test2)
+    return (new DiscrodPolls(chatHistoryService, client))
+      .reset(startmsgID, endMsgId, [], c.channel);
 
   if (c.name == CommandNames.lunch || c.name == CommandNames.summary) {
     c.channel.sendMessage("Summaryzing from messages!!!")
