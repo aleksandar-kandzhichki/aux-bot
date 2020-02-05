@@ -21,8 +21,17 @@ discordCommands.commands.subscribe(async c => {
   if (c.name == CommandNames.unknown) return c.channel.sendMessage("Unrecognized command!");
   if (c.name == CommandNames.createPollFromURL) {
     let meals = await commandProcessor.parseURLFoodData(c.params);
-    if(!meals) throw new Error("No meals for this link!");
-    return c.channel.sendMessage(meals.toString());
+    let mappedMeals = meals.map(meal => ({ name: meal, voteOptions: ["👍"], votes: [], messageId: '' }));
+    let mealObject: {[key: string]: typeof mappedMeals[0]} = {};
+    for(let meal of mappedMeals) {
+      mealObject[meal.name] = meal;
+    }
+    let msgs = await (new DiscrodPolls(chatHistoryService, client))
+    .createPoll(mealObject, c.channel);
+
+    startmsgID = msgs[0];
+    endMsgId = msgs[msgs.length - 1];
+    //return c.channel.sendMessage(meals.toString());
   }
   if (c.name == CommandNames.help) return c.channel.sendMessage(commandProcessor.executeHelpCommand(c.params));
 

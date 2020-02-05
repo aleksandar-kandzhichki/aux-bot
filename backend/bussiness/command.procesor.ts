@@ -2,7 +2,8 @@ import { Command, CommandParams, CommandNames } from "../appInterfaces/Command";
 import { ICommandProcessor } from "../appInterfaces/ICommandProcessor";
 import { commandsInfo } from "../config/commands.info";
 import defaultExternalUrlModule, { IExternalURLsModule } from "./web/external-urls.module";
-import { unlink, readFileSync } from "fs-extra";
+import { readFileSync } from "fs-extra";
+import { SupportedURLs, URLsConfig } from "../appInterfaces/SupportedURLs";
 
 export class CommandProcessor implements  ICommandProcessor {
 
@@ -28,16 +29,26 @@ export class CommandProcessor implements  ICommandProcessor {
             throw new Error(`Please provide a url! For more information see !help -${CommandNames.createPollFromURL}!`);
        await this.externalURlModule.getTemplateFromURL(_params.url, "./test.html");
        const template = readFileSync("./test.html").toString();
-       unlink("./test.html");
-       if(_params.url.includes("takeaway")) return this.matchElementsFromTemplate(template, "data-product-name");
-       throw new Error("Unsupported url!")
+       //unlink("./test.html");
+       let matchedUrl = this.matchURL(_params.url);
+       let meals = this.matchElementsFromTemplate(template, matchedUrl);
+       return meals;
     }
 
-    matchElementsFromTemplate(template: string, attribute: string) {
-        const str = `${attribute}="(.*?)"`;
-        const regex = new RegExp(str, "g");
-        return regex.exec(template);
-        //return template.match(regex)?.map(el => el.);
+    matchURL(url: string) {
+        let supportedUrls = Object.values(SupportedURLs);
+        let mappedUrl = supportedUrls.find(elem => url.includes(elem));
+        if(!mappedUrl) throw new Error("Unsupported url!");
+        return mappedUrl;
+    }
+
+    matchElementsFromTemplate(template: string, url: SupportedURLs) {
+        const config = URLsConfig[url];
+        const names = template.match(config.regex)?.map(config.extractGroup);
+        if (url == SupportedURLs.FoodPanda) names?.pop();
+        const prices = template.match(config.priceRegex)?.map(config.extractPrice);
+        if(!names || !prices) throw new Error("No meals for this link!");
+        return names.map((name, index) => `${name}   ${prices[index]}`);
     }
 
     executeHelpCommand(params?: CommandParams) {
