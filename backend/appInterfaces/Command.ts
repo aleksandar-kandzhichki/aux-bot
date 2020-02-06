@@ -27,11 +27,12 @@ export enum CommandNames {
     summarizePoll = "summarizePoll",
     summary = "summary",
     lunch = "lunch",
-    lunchFromImage = "fromimage",
     ignore = "ignore",
     unknown = "unknown",
+    help = "help",
     test = "test",
-    test2 = "proba"
+    test2 = "proba",
+    createPollFromURL = "createPollFromURL"
 }
 export interface CommandParams {
     [param: string]: string | true;
