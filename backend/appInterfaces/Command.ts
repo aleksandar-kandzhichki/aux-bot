@@ -26,11 +26,12 @@ export class UnknownCommand extends Command {
 export enum CommandNames {
     summary = "summary",
     lunch = "lunch",
-    lunchFromImage = "fromimage",
     ignore = "ignore",
     unknown = "unknown",
+    help = "help",
     test = "test",
-    test2 = "proba"
+    test2 = "proba",
+    createPollFromURL = "createPollFromURL"
 }
 export interface CommandParams {
     [param: string]: string | true;

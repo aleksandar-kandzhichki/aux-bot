@@ -3,12 +3,14 @@ import auth from './auth.json';
 import { DiscordCommandReader } from './discord/CommandReader';
 import { CommandNames } from './appInterfaces/Command';
 import { DiscordChatHistory } from './discord/ChatHistory';
+import { CommandProcessor } from './bussiness/command.procesor.js';
 import { DiscrodPolls } from './discord/DiscordPolls';
 
 
 const client = new Discord.Client();
 const discordCommands = new DiscordCommandReader(client);
 const chatHistoryService = new DiscordChatHistory(client);
+const commandProcessor = new CommandProcessor();
 
 type processedOrder = { name: string, order: string };
 let startmsgID = '', endMsgId = '';
@@ -17,7 +19,22 @@ discordCommands.registerCommandNames(Object.values(CommandNames));
 discordCommands.commands.subscribe(async c => {
   console.log(c);
   if (c.name == CommandNames.unknown) return c.channel.sendMessage("Unrecognized command!");
-  if (c.name == CommandNames.lunchFromImage) return c.channel.sendMessage("making poll from image");
+  if (c.name == CommandNames.createPollFromURL) {
+    let { meals, restaurantName } = await commandProcessor.parseURLFoodData(c.params);
+    let mappedMeals = meals.map(meal => ({ name: `${meal.mealName}   ${meal.mealPrice}`, voteOptions: ["👍"], votes: [], messageId: '' }));
+    let mealObject: { [key: string]: typeof mappedMeals[0] } = {};
+    for(let meal of mappedMeals) {
+      mealObject[meal.name] = meal;
+    }
+    await c.channel.sendMessage(`Restaurant: ${restaurantName}`);
+    let msgs = await (new DiscrodPolls(chatHistoryService, client))
+    .createPoll(mealObject, c.channel);
+
+    startmsgID = msgs[0];
+    endMsgId = msgs[msgs.length - 1];
+    //return c.channel.sendMessage(meals.toString());
+  }
+  if (c.name == CommandNames.help) return c.channel.sendMessage(commandProcessor.executeHelpCommand(c.params));
 
   if (c.name == CommandNames.test) {
     let msgs = await (new DiscrodPolls(chatHistoryService, client))
@@ -56,24 +73,8 @@ discordCommands.commands.subscribe(async c => {
 
     return;
   }
-  return
-  // fetching messages by date with -date dateStr
-  // let date: Date | undefined;
-  // if (c.params.date) {
-  //   if (typeof c.params.date == "string") {
-  //     let parsed = Date.parse(c.params.date)
-  //     if (Number.isNaN(parsed)) return c.channel.sendMessage("Could not parse date");
-  //     date = new Date(parsed);
-  //   }
-  //   else return c.channel.sendMessage("Could not parse date");
-  // }
-  // return summarizeMessages(c.channel, date);
+  return;
 })
-
-// async function summarizeMessages(channel: DiscordChannel, date?: Date) {
-//   let history = await chatHistoryService.getByDate(date, channel);
-//   channel.sendMessage(`checking ${history.length} messages!`);
-// }
 
 function extractOrder(text: string, searchStr?: string) {
   if (!searchStr) return text;
