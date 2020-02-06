@@ -13,7 +13,7 @@ export class CommandProcessor implements  ICommandProcessor {
         ) {
             this.tempFolderName = "temps";
             ensureDirSync(this.tempFolderName);
-        }
+    }
 
     executeCommand(command: Command) {
         switch(command.name) {
@@ -59,12 +59,12 @@ export class CommandProcessor implements  ICommandProcessor {
 
     executeHelpCommand(params?: CommandParams) {
         const allCommands = Object.values(CommandNames);
-        const helpCommands = !params || !Object.keys(params).length? allCommands: allCommands.filter(command => !!params[command]);
+        const helpCommands = !params || !Object.keys(params).length? allCommands: allCommands.filter(command => !!Object.keys(params).includes(command));
         const helpText = helpCommands.reduce((prev, cur) => {
             const info = commandsInfo[cur];
             if(!info) return prev;
             return `${prev}
-            The purpose for this command is ${info.purpose}
+            The purpose for the command - ${info.name} is ${info.purpose}
             The examples for ${info.name} command are:
             ${JSON.stringify(info.examples)}.
             ` 

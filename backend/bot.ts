@@ -73,24 +73,8 @@ discordCommands.commands.subscribe(async c => {
 
     return;
   }
-  return
-  // fetching messages by date with -date dateStr
-  // let date: Date | undefined;
-  // if (c.params.date) {
-  //   if (typeof c.params.date == "string") {
-  //     let parsed = Date.parse(c.params.date)
-  //     if (Number.isNaN(parsed)) return c.channel.sendMessage("Could not parse date");
-  //     date = new Date(parsed);
-  //   }
-  //   else return c.channel.sendMessage("Could not parse date");
-  // }
-  // return summarizeMessages(c.channel, date);
+  return;
 })
-
-// async function summarizeMessages(channel: DiscordChannel, date?: Date) {
-//   let history = await chatHistoryService.getByDate(date, channel);
-//   channel.sendMessage(`checking ${history.length} messages!`);
-// }
 
 function extractOrder(text: string, searchStr?: string) {
   if (!searchStr) return text;

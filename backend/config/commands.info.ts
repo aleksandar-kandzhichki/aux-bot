@@ -29,4 +29,14 @@ export const commandsInfo: { [key in CommandNames]?: ICommandInformation} = {
         }]
     },
 
+    [CommandNames.createPollFromURL]: {
+        name: CommandNames.createPollFromURL,
+        purpose: "to create a poll with the food from the specified link (For now only foodpanda and takeaway links are supported!",
+        examples: ["!createPollFromURL -url https://www.foodpanda.bg/restaurant/v7od/ola-taste-of-med#reorder"],
+        params: [{
+            name: "url",
+            usage: "the url you wish to get a poll for"
+        }]
+    },
+
 }

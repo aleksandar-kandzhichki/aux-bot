@@ -11,6 +11,10 @@ export type URLConf = {
     extractRestaurantName: (str: string) => string;
 };
 
+export type URLMealInfo = {
+    meals: string[];
+    restaurantName: string;
+};
 
 export const URLsConfig: { [key in SupportedURLs]: URLConf } = {
     [SupportedURLs.Takeaway]: {
