@@ -24,6 +24,7 @@ export class UnknownCommand extends Command {
 }
 
 export enum CommandNames {
+    summarizePoll = "summarizePoll",
     summary = "summary",
     lunch = "lunch",
     lunchFromImage = "fromimage",

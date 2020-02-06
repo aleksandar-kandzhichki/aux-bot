@@ -56,6 +56,17 @@ discordCommands.commands.subscribe(async c => {
 
     return;
   }
+
+  if (c.name == CommandNames.summarizePoll) {
+    let summarized = await (new DiscrodPolls(chatHistoryService, client)).summarize(c.params.start as string, c.params.end as string, c.channel);
+
+    c.channel.sendMessage(Object.keys(summarized).map(k => `${k}: ${Object.keys(summarized[k]).length > 0 ?
+      Object.keys(summarized[k]).map(reactionName => `${reactionName} x ${summarized[k][reactionName]}`) :
+      'no reactions!'
+      }`).join('  \n'));
+
+    return;
+  }
   return
   // fetching messages by date with -date dateStr
   // let date: Date | undefined;
