@@ -2,8 +2,8 @@ import { Command, CommandParams, CommandNames } from "../appInterfaces/Command";
 import { ICommandProcessor } from "../appInterfaces/ICommandProcessor";
 import { commandsInfo } from "../config/commands.info";
 import defaultExternalUrlModule, { IExternalURLsModule } from "./web/external-urls.module";
-import { readFileSync, unlink, ensureDirSync } from "fs-extra";
-import { SupportedURLs, URLsConfig } from "../appInterfaces/SupportedURLs";
+import { readFileSync, ensureDirSync, unlink } from "fs-extra";
+import { SupportedURLs, URLsConfig, URLMealInfo } from "../appInterfaces/SupportedURLs";
 import { join } from 'path';
 export class CommandProcessor implements  ICommandProcessor {
     tempFolderName: string;
@@ -35,10 +35,9 @@ export class CommandProcessor implements  ICommandProcessor {
        let tempFilePath = join(this.tempFolderName, `${matchedUrl}__${new Date().toDateString()}.html`);
        await this.externalURlModule.getTemplateFromURL(_params.url, tempFilePath);
        const template = readFileSync(tempFilePath).toString();
-       unlink(tempFilePath);
+       await unlink(tempFilePath);
        let meals = this.matchElementsFromTemplate(template, matchedUrl);
-       let restaurantName = URLsConfig[matchedUrl].extractRestaurantName(template);
-       return { meals, restaurantName };
+       return meals;
     }
 
     matchURL(url: string) {
@@ -50,11 +49,17 @@ export class CommandProcessor implements  ICommandProcessor {
 
     matchElementsFromTemplate(template: string, url: SupportedURLs) {
         const config = URLsConfig[url];
-        const names = template.match(config.foodRegex)?.map(config.extractFoodGroup);
-        if (url == SupportedURLs.FoodPanda) names?.pop();
-        const prices = template.match(config.priceRegex)?.map(config.extractPrice);
-        if(!names || !prices) throw new Error("No meals for this link!");
-        return names.map((name, index) => `${name}   ${prices[index]}`);
+        const restaurantName = config.restaurantNameRegex.exec(template);
+        if(!restaurantName) throw "No name for the restaurant!";
+        const result: URLMealInfo = { meals: [], restaurantName: restaurantName[1] };
+        let foodName = config.foodRegex.exec(template);
+        let price = config.priceRegex.exec(template);
+        while(!!foodName && !!price) {
+            result.meals.push({ mealName: foodName[1].replace(/\s{2,}/g, ''), mealPrice: price[1].replace(/\s{2,}/g, '') });
+            foodName = config.foodRegex.exec(template);
+            price = config.priceRegex.exec(template);
+        }
+        return result;
     }
 
     executeHelpCommand(params?: CommandParams) {

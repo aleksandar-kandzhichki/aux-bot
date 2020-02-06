@@ -21,8 +21,8 @@ discordCommands.commands.subscribe(async c => {
   if (c.name == CommandNames.unknown) return c.channel.sendMessage("Unrecognized command!");
   if (c.name == CommandNames.createPollFromURL) {
     let { meals, restaurantName } = await commandProcessor.parseURLFoodData(c.params);
-    let mappedMeals = meals.map(meal => ({ name: meal, voteOptions: ["👍"], votes: [], messageId: '' }));
-    let mealObject: {[key: string]: typeof mappedMeals[0]} = {};
+    let mappedMeals = meals.map(meal => ({ name: `${meal.mealName}   ${meal.mealPrice}`, voteOptions: ["👍"], votes: [], messageId: '' }));
+    let mealObject: { [key: string]: typeof mappedMeals[0] } = {};
     for(let meal of mappedMeals) {
       mealObject[meal.name] = meal;
     }

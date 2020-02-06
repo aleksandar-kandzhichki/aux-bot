@@ -10,7 +10,6 @@ export class ExternalURLsModule implements IExternalURLsModule {
     getTemplateFromURL(url: string, pathToSaveAt: string) {
         return new Promise<void>((resolve, reject) => {
             get(url)
-            .on('error', (error) => reject(error))
             .pipe(createWriteStream(pathToSaveAt))
             .on('finish', () => resolve())
             .on('error', (error) => reject(error))
