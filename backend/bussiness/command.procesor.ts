@@ -1,15 +1,16 @@
 import { Command, CommandParams, CommandNames } from "../appInterfaces/Command";
 import { ICommandProcessor } from "../appInterfaces/ICommandProcessor";
-import { commandsInfo } from "../config/commands.info";
 import defaultExternalUrlModule, { IExternalURLsModule } from "./web/external-urls.module";
 import { readFileSync, ensureDirSync, unlink } from "fs-extra";
 import { SupportedURLs, URLsConfig, URLMealInfo } from "../appInterfaces/SupportedURLs";
 import { join } from 'path';
+import defaultCommandInfoStorage, { ICommandInfoStorage } from "../storage/command-info.storage";
 export class CommandProcessor implements  ICommandProcessor {
     tempFolderName: string;
 
     constructor(
         private externalURlModule: IExternalURLsModule = defaultExternalUrlModule,
+        private commandsInfoStorage: ICommandInfoStorage = defaultCommandInfoStorage,
         ) {
             this.tempFolderName = "temps";
             ensureDirSync(this.tempFolderName);
@@ -62,20 +63,18 @@ export class CommandProcessor implements  ICommandProcessor {
         return result;
     }
 
-    executeHelpCommand(params?: CommandParams) {
-        const allCommands = Object.values(CommandNames);
-        const helpCommands = !params || !Object.keys(params).length? allCommands: allCommands.filter(command => !!Object.keys(params).includes(command));
-        const helpText = helpCommands.reduce((prev, cur) => {
-            const info = commandsInfo[cur];
-            if(!info) return prev;
+    async executeHelpCommand(params?: CommandParams) {
+        const helpCommands = (!!params && !!Object.keys(params).length? Object.keys(params): Object.values(CommandNames)) as CommandNames[];
+        const commandsInformation = await this.commandsInfoStorage.findCommandInfoByNames(helpCommands);
+        const helpText = commandsInformation.reduce((prev, cur) => {
+            if(!cur) return prev;
             return `${prev}
-            The purpose for the command - ${info.name} is ${info.purpose}
-            The examples for ${info.name} command are:
-            ${JSON.stringify(info.examples)}.
+            The purpose for the command - ${cur.name} is ${cur.purpose}
+            The examples for ${cur.name} command are:
+            ${JSON.stringify(cur.examples)}.
             ` 
         },"The following text shows the usage of the supported commands:\n" )
         return helpText;
     }
-
 
 }

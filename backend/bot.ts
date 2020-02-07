@@ -5,6 +5,7 @@ import { CommandNames } from './appInterfaces/Command';
 import { DiscordChatHistory } from './discord/ChatHistory';
 import { CommandProcessor } from './bussiness/command.procesor.js';
 import { DiscrodPolls } from './discord/DiscordPolls';
+import { mongoConnect } from './dbConnection.js';
 
 
 const client = new Discord.Client();
@@ -34,7 +35,7 @@ discordCommands.commands.subscribe(async c => {
     endMsgId = msgs[msgs.length - 1];
     //return c.channel.sendMessage(meals.toString());
   }
-  if (c.name == CommandNames.help) return c.channel.sendMessage(commandProcessor.executeHelpCommand(c.params));
+  if (c.name == CommandNames.help) return c.channel.sendMessage(await commandProcessor.executeHelpCommand(c.params));
 
   if (c.name == CommandNames.test) {
     let msgs = await (new DiscrodPolls(chatHistoryService, client))
@@ -93,3 +94,4 @@ function groupByOrder(history: processedOrder[]): { [order: string]: number } {
 }
 
 client.login(auth.token);
+mongoConnect();
