@@ -23,6 +23,22 @@
                 "<node_internals>/**",
                 "${workspaceFolder}/backend/node_modules/**"
             ]
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch File",
+            "program": "${file}",
+            "preLaunchTask": "npm: build - backend",
+            "outFiles": [
+                "${workspaceFolder}/backend/build/**/*.js"
+            ],
+            "cwd": "${workspaceFolder}",
+            "skipFiles": [
+                "<node_internals>/**",
+                "${workspaceFolder}/backend/node_modules/**"
+            ],
+            "args":[]
+        },
     ]
 }
