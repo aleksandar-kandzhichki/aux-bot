@@ -10,6 +10,6 @@ const schema = new Schema({
 });
 
 export interface ICommandInformationMongoModel extends ICommandInformation, Document { }
-var Model = model<ICommandInformationMongoModel>('commands-info', schema);
+const commandInfoModel = model<ICommandInformationMongoModel>('commands-info', schema);
 
-export default Model;
+export default commandInfoModel;

@@ -24,12 +24,12 @@ discordCommands.commands.subscribe(async c => {
     let { meals, restaurantName } = await commandProcessor.parseURLFoodData(c.params);
     let mappedMeals = meals.map(meal => ({ name: `${meal.mealName}   ${meal.mealPrice}`, voteOptions: ["👍"], votes: [], messageId: '' }));
     let mealObject: { [key: string]: typeof mappedMeals[0] } = {};
-    for(let meal of mappedMeals) {
+    for (let meal of mappedMeals) {
       mealObject[meal.name] = meal;
     }
     await c.channel.sendMessage(`Restaurant: ${restaurantName}`);
     let msgs = await (new DiscrodPolls(chatHistoryService, client))
-    .createPoll(mealObject, c.channel);
+      .createPoll(mealObject, c.channel);
 
     startmsgID = msgs[0];
     endMsgId = msgs[msgs.length - 1];
