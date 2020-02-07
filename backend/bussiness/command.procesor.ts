@@ -2,7 +2,7 @@ import { Command, CommandParams, CommandNames } from "../appInterfaces/Command";
 import { ICommandProcessor } from "../appInterfaces/ICommandProcessor";
 import defaultExternalUrlModule, { IExternalURLsModule } from "./web/external-urls.module";
 import { readFileSync, ensureDirSync, unlink } from "fs-extra";
-import { URLMealInfo, IURLConfig } from "../appInterfaces/SupportedURLs";
+import { URLMealInfo, IURLConfig } from "../appInterfaces/IURLsConfig";
 import { join } from 'path';
 import defaultCommandInfoStorage, { ICommandInfoStorage } from "../storage/command-info.storage";
 import defaultURLInfoStorage, { IURLInfoStorage } from "../storage/url-info.storage";

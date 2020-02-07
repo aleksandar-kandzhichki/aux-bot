@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 import defaultURLInfoModel, { IURLInfoMongoModel } from "./models/url-info.model";
-import { IURLConfig } from "../appInterfaces/SupportedURLs";
+import { IURLConfig } from "../appInterfaces/IURLsConfig";
 
 export interface IURLInfoStorage {
     addNewURL(url: IURLConfig): Promise<void>;

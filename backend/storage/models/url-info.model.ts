@@ -1,4 +1,4 @@
-import { IURLConfig } from "../../appInterfaces/SupportedURLs";
+import { IURLConfig } from "../../appInterfaces/IURLsConfig";
 import mongoose from 'mongoose';
 require('mongoose-regexp')(mongoose);
 

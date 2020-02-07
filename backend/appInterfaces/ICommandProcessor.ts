@@ -1,5 +1,5 @@
 import { Command, CommandParams } from "./Command";
-import { URLMealInfo } from "./SupportedURLs";
+import { URLMealInfo } from "./IURLsConfig";
 
 export interface ICommandProcessor {
 
