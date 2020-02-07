@@ -5,7 +5,7 @@ import { IURLConfig } from "../appInterfaces/IURLsConfig";
 export interface IURLInfoStorage {
     addNewURL(url: IURLConfig): Promise<void>;
     findURLInfoByName(name: string): Promise<IURLConfig>;
-    updateCommandInfo(url: IURLConfig): Promise<void>;
+    updateURLInfo(url: IURLConfig): Promise<void>;
     getAllURLInfo(): Promise<IURLConfig[]>;
 }
 
@@ -26,7 +26,7 @@ export class URLInfoStorage implements IURLInfoStorage {
         return this.urlInfoModel.findOne({ name }).lean().exec();
     }
 
-    updateCommandInfo(url: IURLConfig): Promise<void> {
+    updateURLInfo(url: IURLConfig): Promise<void> {
         return this.urlInfoModel.updateOne({ name: url.name }, { $set: url }).exec();
     }
 }
