@@ -3,7 +3,7 @@ import { connect } from 'mongoose';
 const options = {
     useNewUrlParser: true,
 };
-const dbPort = 3327;
+const dbPort = 777;
 
 export function mongoConnect() {
     return connect(`mongodb://dev.auxcode.com:${dbPort}/AuxBot`, options)
