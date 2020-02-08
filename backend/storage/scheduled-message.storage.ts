@@ -4,7 +4,7 @@ import { IScheduledMessage } from "../appInterfaces/IScheduledMessage";
 
 export interface IScheduledMessageStorage {
     addNewScheduledMessage(data: IScheduledMessage): Promise<void>;
-    //getAllInTimeFrame(hour: number, minutes: number, timeStat: TimeStatus, interval: number): Promise<IScheduledMessage[]>;
+    //getAllInTimeFrame(hour: number, minutes: number, interval: number): Promise<IScheduledMessage[]>;
     updateMessageById(data: IScheduledMessage): Promise<void>;
     getAllMessages(): Promise<IScheduledMessage[]>;
 }
@@ -20,8 +20,13 @@ export class ScheduledMessageStorage implements IScheduledMessageStorage {
         return this.scheduledMessageModel.find({}).lean().exec();
     }
 
-    // getAllInTimeFrame(hour: number, minutes: number, timeStat: TimeStatus, interval: number): Promise<IScheduledMessage[]> {
-    //     return this.scheduledMessageModel.find({}).lean().exec();
+    // getAllInTimeFrame(hours: number, minutes: number, interval: number): Promise<IScheduledMessage[]> {
+    //     return this.scheduledMessageModel.find({
+    //         $or: [{
+
+    //         }
+    //         ]
+    //     }).lean().exec();
     // }
 
 

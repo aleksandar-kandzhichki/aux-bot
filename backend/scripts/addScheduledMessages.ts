@@ -1,16 +1,33 @@
 import { mongoConnect } from "../dbConnection"
 import defaultScheduledMessagesStorage from "../storage/scheduled-message.storage";
-import { IScheduledMessage, TimeStatus } from "../appInterfaces/IScheduledMessage";
+import { IScheduledMessage } from "../appInterfaces/IScheduledMessage";
 
 (async () => {
     await mongoConnect();
     let messages = [
         {
-            channel: "lala",
+            channel: "bot-testing",
             hour: 12,
             minute: 0,
+            message: "TRalalalalala12",
+        },
+        {
+            channel: "bot-testing",
+            hour: 13,
+            minute: 42,
             message: "TRalalalalala",
-            timeStatus: TimeStatus.PM,
+        },
+        {
+            channel: "bot-testing",
+            hour: 13,
+            minute: 56,
+            message: "TRalalalalala",
+        },
+        {
+            channel: "bot-testing",
+            hour: 14,
+            minute: 2,
+            message: "TRalalalalala",
         },
     ] as IScheduledMessage[];
     for (let message of messages) {
