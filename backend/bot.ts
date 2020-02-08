@@ -23,12 +23,12 @@ discordCommands.commands.subscribe(async c => {
     let { meals, restaurantName } = await commandProcessor.parseURLFoodData(c.params);
     let mappedMeals = meals.map(meal => ({ name: `${meal.mealName}   ${meal.mealPrice}`, voteOptions: ["👍"], votes: [], messageId: '' }));
     let mealObject: { [key: string]: typeof mappedMeals[0] } = {};
-    for(let meal of mappedMeals) {
+    for (let meal of mappedMeals) {
       mealObject[meal.name] = meal;
     }
     await c.channel.sendMessage(`Restaurant: ${restaurantName}`);
     let msgs = await (new DiscrodPolls(chatHistoryService, client))
-    .createPoll(mealObject, c.channel);
+      .createPoll(mealObject, c.channel);
 
     startmsgID = msgs[0];
     endMsgId = msgs[msgs.length - 1];
@@ -73,7 +73,18 @@ discordCommands.commands.subscribe(async c => {
 
     return;
   }
-  return;
+
+  if (c.name == CommandNames.summarizePoll) {
+    let summarized = await (new DiscrodPolls(chatHistoryService, client)).summarize(c.params.start as string, c.params.end as string, c.channel);
+
+    c.channel.sendMessage(Object.keys(summarized).map(k => `${k}: ${Object.keys(summarized[k]).length > 0 ?
+      Object.keys(summarized[k]).map(reactionName => `${reactionName} x ${summarized[k][reactionName]}`) :
+      'no reactions!'
+      }`).join('  \n'));
+
+    return;
+  }
+  return
 })
 
 function extractOrder(text: string, searchStr?: string) {

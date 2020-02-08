@@ -16,10 +16,22 @@ export class DiscordChatHistory implements ChatHistory {
         console.log(id);
         throw new Error("Method not implemented.");
     }
-    async getByDate(date: Date = new Date(), channel?: DiscordChannel): Promise<Message[]> {
+
+    /** Gets all messages between firstId and lastId in historical order - firstId was sent first */
+    getBetweenIds(firstId: string, lastId: string, channel?: DiscordChannel): Promise<Message[]> {
+        if (!!channel) return channel.fetchMessages({ after: firstId }).then(m => {
+            let arr = m.array().reverse(); // first message in history comes last here, last message in history is with index 0 -_-
+            let lastIndex = arr.findIndex(m => m.id == lastId);
+            if (lastIndex == -1) return arr; // this should fetch more messages!!!;
+            return arr.splice(0, lastIndex);
+        })
+        return Promise.resolve([]);
+    }
+
+    getByDate(date: Date = new Date(), channel?: DiscordChannel): Promise<Message[]> {
         console.log(date);
         if (!!channel) return channel.fetchMessages().then(m => m.array().filter(el => this.isSameDay(el.createdAt, date)))
-        return [];
+        return Promise.resolve([]);
     }
 
     private isSameDay(d1: Date, d2: Date) {
