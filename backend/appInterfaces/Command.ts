@@ -1,8 +1,10 @@
+import { DiscordChannel } from "../discord/types/DiscordChannel";
+
 export class Command {
     issuer: any;
     name: CommandNames;
     params: CommandParams;
-    channel: any;
+    channel: DiscordChannel;
 
     constructor(other: Command) {
         this.issuer = other.issuer;
