@@ -74,7 +74,18 @@ discordCommands.commands.subscribe(async c => {
 
     return;
   }
-  return;
+
+  if (c.name == CommandNames.summarizePoll) {
+    let summarized = await (new DiscrodPolls(chatHistoryService, client)).summarize(c.params.start as string, c.params.end as string, c.channel);
+
+    c.channel.sendMessage(Object.keys(summarized).map(k => `${k}: ${Object.keys(summarized[k]).length > 0 ?
+      Object.keys(summarized[k]).map(reactionName => `${reactionName} x ${summarized[k][reactionName]}`) :
+      'no reactions!'
+      }`).join('  \n'));
+
+    return;
+  }
+  return
 })
 
 function extractOrder(text: string, searchStr?: string) {

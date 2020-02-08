@@ -1,4 +1,4 @@
-import { BotPolls, PollOptions } from "../appInterfaces/Polls";
+import { BotPolls, PollOptions, PollResult } from "../appInterfaces/Polls";
 import { ChatHistory } from "../appInterfaces/ChatHistory";
 import { Client, Message } from "discord.js";
 import { DiscordChannel } from "./types/DiscordChannel";
@@ -31,13 +31,22 @@ export class DiscrodPolls implements BotPolls {
         return messageIds;
     }
 
-    summarize(startMessage: string, endMessage: string, voteOptions: string[]): Object[] {
+    async summarize(startMessage: string, endMessage: string, channel: DiscordChannel | undefined = this.defaultChannel): Promise<PollResult> {
         this.history;
         this.client;
         startMessage;
         endMessage;
-        voteOptions;
-        throw new Error("Method not implemented.");
+
+        let messages = await this.history.getBetweenIds(startMessage, endMessage, channel);
+        let processed: PollResult = messages.reduce((acc, cur) => {
+            const reactionsObj = cur.reactions.reduce((acc, reaction) => {
+                acc[reaction.emoji.name] = reaction.count
+                return acc;
+            }, {} as { [reactionName: string]: number })
+            acc[cur.content] = reactionsObj;
+            return acc;
+        }, {} as PollResult)
+        return processed;
         // return [];
     }
 
