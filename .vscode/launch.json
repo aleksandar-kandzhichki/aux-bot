@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Bot",
             "preLaunchTask": "npm: build - backend",
-            "program": "${workspaceFolder}/backend/bot.ts",
+            "program": "${workspaceFolder}/backend/app.ts",
             "outFiles": [
                 "${workspaceFolder}/backend/build/**/*.js"
             ],
