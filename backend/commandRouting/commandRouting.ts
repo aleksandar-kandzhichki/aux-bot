@@ -29,7 +29,7 @@ export function register() {
             .createPoll(mealObject, c.channel);
     })
 
-    AppBot.on(CommandNames.help, c => c.channel.sendMessage(commandProcessor.executeHelpCommand(c.params)))
+    AppBot.on(CommandNames.help, async c => c.channel.sendMessage(await commandProcessor.executeHelpCommand(c.params)))
     AppBot.on(CommandNames.test, async c => {
         await (new DiscrodPolls(chatHistoryService, AppClient))
             .createPoll({

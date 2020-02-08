@@ -7,7 +7,7 @@ export interface ICommandInformation {
     params: { name: string, usage: string }[]
 }
 
-export const commandsInfo: { [key in CommandNames]?: ICommandInformation} = {
+export const commandsInfo: { [key in CommandNames]?: ICommandInformation } = {
 
     [CommandNames.summary]: {
         name: CommandNames.summary,

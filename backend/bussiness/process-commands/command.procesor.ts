@@ -1,15 +1,19 @@
 import { Command, CommandParams, CommandNames } from "../../appInterfaces/Command";
 import { ICommandProcessor } from "../../appInterfaces/ICommandProcessor";
-import { commandsInfo } from "../../config/commands.info";
 import defaultExternalUrlModule, { IExternalURLsModule } from "../web/external-urls.module";
 import { readFileSync, ensureDirSync, unlink } from "fs-extra";
-import { SupportedURLs, URLsConfig, URLMealInfo } from "../../appInterfaces/SupportedURLs";
 import { join } from 'path';
+import defaultCommandInfoStorage, { ICommandInfoStorage } from "../../storage/command-info.storage";
+import defaultURLInfoStorage, { IURLInfoStorage } from "../../storage/url-info.storage";
+import { IURLConfig, URLMealInfo } from "../../appInterfaces/IURLsConfig";
+
 export class CommandProcessor implements ICommandProcessor {
     tempFolderName: string;
 
     constructor(
         private externalURlModule: IExternalURLsModule = defaultExternalUrlModule,
+        private commandsInfoStorage: ICommandInfoStorage = defaultCommandInfoStorage,
+        private urlInfoStorage: IURLInfoStorage = defaultURLInfoStorage,
     ) {
         this.tempFolderName = "temps";
         ensureDirSync(this.tempFolderName);
@@ -31,8 +35,8 @@ export class CommandProcessor implements ICommandProcessor {
     async parseURLFoodData(_params?: CommandParams) {
         if (!_params || typeof _params.url != 'string')
             throw new Error(`Please provide a url! For more information see !help -${CommandNames.createPollFromURL}!`);
-        let matchedUrl = this.matchURL(_params.url);
-        let tempFilePath = join(this.tempFolderName, `${matchedUrl}__${new Date().toDateString()}.html`);
+        const matchedUrl = await this.matchURL(_params.url);
+        let tempFilePath = join(this.tempFolderName, `${matchedUrl.name}__${new Date().toDateString()}.html`);
         await this.externalURlModule.getTemplateFromURL(_params.url, tempFilePath);
         const template = readFileSync(tempFilePath).toString();
         await unlink(tempFilePath);
@@ -40,15 +44,15 @@ export class CommandProcessor implements ICommandProcessor {
         return meals;
     }
 
-    matchURL(url: string) {
-        let supportedUrls = Object.values(SupportedURLs);
-        let mappedUrl = supportedUrls.find(elem => url.includes(elem));
+    async matchURL(url: string) {
+        let supportedUrls = await this.urlInfoStorage.getAllURLInfo();
+        let mappedUrl = supportedUrls.find(elem => url.includes(elem.urlKeyword));
         if (!mappedUrl) throw new Error("Unsupported url!");
         return mappedUrl;
     }
 
-    matchElementsFromTemplate(template: string, url: SupportedURLs) {
-        const config = URLsConfig[url];
+    matchElementsFromTemplate(template: string, urlConfig: IURLConfig) {
+        const config = urlConfig.config;
         const restaurantName = config.restaurantNameRegex.exec(template);
         if (!restaurantName) throw "No name for the restaurant!";
         const result: URLMealInfo = { meals: [], restaurantName: restaurantName[1] };
@@ -62,20 +66,18 @@ export class CommandProcessor implements ICommandProcessor {
         return result;
     }
 
-    executeHelpCommand(params?: CommandParams) {
-        const allCommands = Object.values(CommandNames);
-        const helpCommands = !params || !Object.keys(params).length ? allCommands : allCommands.filter(command => !!Object.keys(params).includes(command));
-        const helpText = helpCommands.reduce((prev, cur) => {
-            const info = commandsInfo[cur];
-            if (!info) return prev;
+    async executeHelpCommand(params?: CommandParams) {
+        const helpCommands = (!!params && !!Object.keys(params).length ? Object.keys(params) : Object.values(CommandNames)) as CommandNames[];
+        const commandsInformation = await this.commandsInfoStorage.findCommandInfoByNames(helpCommands);
+        const helpText = commandsInformation.reduce((prev, cur) => {
+            if (!cur) return prev;
             return `${prev}
-            The purpose for the command - ${info.name} is ${info.purpose}
-            The examples for ${info.name} command are:
-            ${JSON.stringify(info.examples)}.
+            The purpose for the command - ${cur.name} is ${cur.purpose}
+            The examples for ${cur.name} command are:
+            ${JSON.stringify(cur.examples)}.
             `
         }, "The following text shows the usage of the supported commands:\n")
         return helpText;
     }
-
 
 }
