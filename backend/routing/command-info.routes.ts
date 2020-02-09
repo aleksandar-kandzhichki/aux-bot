@@ -17,7 +17,7 @@ router.get('/api/command-info/commands', wrapper(async (_req, res) => {
 
 router.put('/api/command-info/command', wrapper(async (_req, res) => {
     await defaultCommandInfoStorage.updateCommandInfo(_req.body.command);
-    res.sendStatus(201);
+    res.sendStatus(204);
 }));
 
 export default router;

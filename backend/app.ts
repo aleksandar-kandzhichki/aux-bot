@@ -4,13 +4,13 @@ import commandInfoRouter from "./routing/command-info.routes";
 import urlInfoRouter from "./routing/url-info.routes";
 import scheduledMessageRouter from "./routing/scheduled-messages.routes";
 import * as bodyParser from 'body-parser';
-const express = require('express');
+import * as express from 'express';
 
 mongoConnect();
 
 const port = 3000;
 
-const app = express();
+const app = express.default();
 app.use(bodyParser.json());
 app.use(commandInfoRouter);
 app.use(scheduledMessageRouter);

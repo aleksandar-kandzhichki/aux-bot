@@ -22,7 +22,7 @@ router.get('/api/url-info/url/:name', wrapper(async (_req, res) => {
 
 router.put('/api/url-info/url', wrapper(async (_req, res) => {
     await urlInfoStorage.updateURLInfo(_req.body.urlInfo);
-    res.sendStatus(201);
+    res.sendStatus(204);
 }));
 
 export default router;

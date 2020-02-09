@@ -17,7 +17,7 @@ router.get('/api/scheduled-messages/messages', wrapper(async (_req, res) => {
 
 router.put('/api/scheduled-messages/message', wrapper(async (_req, res) => {
     await scheduledMessagestorage.updateMessageById(_req.body.message);
-    res.sendStatus(201);
+    res.sendStatus(204);
 }));
 
 export default router;
