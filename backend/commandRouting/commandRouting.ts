@@ -5,7 +5,7 @@ import { DiscordCommandReader } from "../discord/CommandReader";
 import { ChatHistory } from "../appInterfaces/ChatHistory";
 import { DiscordChatHistory } from "../discord/ChatHistory";
 import { ICommandProcessor } from "../appInterfaces/ICommandProcessor";
-import { CommandProcessor } from "../bussiness/process-commands/command.procesor";
+import { CommandProcessor } from "../business/process-commands/command.procesor";
 import AppClient from "../discord/DiscordClient";
 
 
