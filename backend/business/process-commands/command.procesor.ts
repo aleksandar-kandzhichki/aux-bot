@@ -1,4 +1,4 @@
-import { Command, CommandParams, CommandNames } from "../../appInterfaces/Command";
+import { CommandParams, CommandNames } from "../../appInterfaces/Command";
 import { ICommandProcessor } from "../../appInterfaces/ICommandProcessor";
 import defaultExternalUrlModule, { IExternalURLsModule } from "../web/external-urls.module";
 import { readFileSync, ensureDirSync, unlink } from "fs-extra";
@@ -19,19 +19,6 @@ export class CommandProcessor implements ICommandProcessor {
         ensureDirSync(this.tempFolderName);
     }
 
-    executeCommand(command: Command) {
-        switch (command.name) {
-            case CommandNames.summary: return this.executeSummaryCommand(command.params);
-            case CommandNames.createPollFromURL: return this.parseURLFoodData(command.params);
-            case CommandNames.help: return this.executeHelpCommand(command.params);
-            default: throw new Error("Unsupported command");
-        }
-    }
-
-    executeSummaryCommand(params?: CommandParams) {
-        return Promise.reject(params);
-    }
-
     async parseURLFoodData(_params?: CommandParams) {
         if (!_params || typeof _params.url != 'string')
             throw new Error(`Please provide a url! For more information see !help -${CommandNames.createPollFromURL}!`);
@@ -44,14 +31,14 @@ export class CommandProcessor implements ICommandProcessor {
         return meals;
     }
 
-    async matchURL(url: string) {
+    private async matchURL(url: string) {
         let supportedUrls = await this.urlInfoStorage.getAllURLInfo();
         let mappedUrl = supportedUrls.find(elem => url.includes(elem.urlKeyword));
         if (!mappedUrl) throw new Error("Unsupported url!");
         return mappedUrl;
     }
 
-    matchElementsFromTemplate(template: string, urlConfig: IURLConfig) {
+    private matchElementsFromTemplate(template: string, urlConfig: IURLConfig) {
         const config = urlConfig.config;
         const restaurantName = config.restaurantNameRegex.exec(template);
         if (!restaurantName) throw "No name for the restaurant!";
