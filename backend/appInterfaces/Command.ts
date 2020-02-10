@@ -5,16 +5,18 @@ export class Command {
     name: CommandNames;
     params: CommandParams;
     channel: DiscordChannel;
+    rawInvocation: string;
 
     constructor(other: Command) {
         this.issuer = other.issuer;
         this.name = other.name;
         this.params = other.params;
         this.channel = other.channel;
+        this.rawInvocation = other.rawInvocation;
     }
 
-    static Command(issuer: any, name: any, params: CommandParams, channel: any) {
-        return new Command({ issuer, name, params, channel })
+    static Command(issuer: any, name: any, params: CommandParams, channel: any, rawInvocation: string) {
+        return new Command({ issuer, name, params, channel, rawInvocation })
     }
 }
 
