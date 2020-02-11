@@ -3,6 +3,7 @@ import defaultScheduledMessageStorage, { IScheduledMessageStorage } from "../../
 import auth from '../../auth.json';
 import Discord, { TextChannel } from 'discord.js';
 import { mongoConnect } from "../../dbConnection";
+import { ScheduledMessage } from "../../appInterfaces/IScheduledMessage";
 
 const interval = 5;
 export class ScheduledMessageCron {
@@ -24,6 +25,7 @@ export class ScheduledMessageCron {
         const now = new Date();
         messages = messages.filter(message => (message.hour == now.getHours() && message.minute < now.getMinutes() && message.minute >= now.getMinutes() - interval) ||
             ((message.hour = now.getHours() - 1) && message.minute >= now.getMinutes() + 60 - interval));
+        messages = messages.filter(message => new ScheduledMessage(message).activatedDays.includes(now.getDay()));
         for (let messageInfo of messages) {
             const channel = this.client.channels.array().find(channel => messageInfo.channel == (channel as TextChannel).name) as (TextChannel | undefined);
             if (!channel) {

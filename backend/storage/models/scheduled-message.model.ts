@@ -1,5 +1,6 @@
 import { Schema, model, Document } from "mongoose";
 import { IScheduledMessage } from "../../appInterfaces/IScheduledMessage";
+import { weekDays } from "../../appInterfaces/WeekDays";
 
 
 const schema = new Schema({
@@ -7,6 +8,7 @@ const schema = new Schema({
     hour: { type: Number, min: 0, max: 23 },
     minute: { type: Number, min: 0, max: 59 },
     message: String,
+    activatedDays: { type: [Number], default: weekDays }
 });
 
 export interface IScheduledMessagesMongoModel extends IScheduledMessage, Document { }
