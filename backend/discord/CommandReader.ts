@@ -23,7 +23,7 @@ export class DiscordCommandReader implements CommandReader {
 
     private extractCommandName(msg: string): CommandNames {
         for (let name of this.recognizableCommands) {
-            if (msg.startsWith(`!${name} `)) return name as CommandNames;
+            if (msg.startsWith(`!${name} `) || msg == `!${name}`) return name as CommandNames;
         }
 
         return CommandNames.unknown;
