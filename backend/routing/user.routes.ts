@@ -3,7 +3,7 @@ import defaultAuthProcessor from '../business/auth.processor';
 
 const router = express.Router();
 
-router.post('/api/user/login', (req, res) => {
+router.post('/api/users/login', (req, res) => {
     try {
         const authToken = defaultAuthProcessor.validateLogin(req.body.password);
         res.json(authToken);
