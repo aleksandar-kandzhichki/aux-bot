@@ -1,7 +1,7 @@
 import Discord from 'discord.js';
 import { DiscordCommandReader } from './discord/CommandReader';
 import { CommandNames, Command } from './appInterfaces/Command';
-import { CommandProcessor } from './bussiness/process-commands/command.procesor.js';
+import { CommandProcessor } from './business/process-commands/command.procesor.js';
 import { CommandReader } from './appInterfaces/CommandReader';
 import { ICommandProcessor } from './appInterfaces/ICommandProcessor';
 import AppClient from './discord/DiscordClient';

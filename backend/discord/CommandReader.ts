@@ -23,7 +23,7 @@ export class DiscordCommandReader implements CommandReader {
 
     private extractCommandName(msg: string): CommandNames {
         for (let name of this.recognizableCommands) {
-            if (msg.includes(name)) return name as CommandNames;
+            if (msg.startsWith(`!${name} `) || msg == `!${name}`) return name as CommandNames;
         }
 
         return CommandNames.unknown;
@@ -49,7 +49,7 @@ export class DiscordCommandReader implements CommandReader {
             if (!this.isBotInvocation(msg.content)) return;
 
             let { name, params } = this.parse(msg.content);
-            let command: DiscordCommand = new DiscordCommand({ issuer: msg.author, name, params, channel: msg.channel });
+            let command: DiscordCommand = new DiscordCommand({ issuer: msg.author, name, params, channel: msg.channel, rawInvocation: msg.content });
 
             this.commands.next(command);
         })

@@ -6,14 +6,15 @@ import { CommandNames } from "../appInterfaces/Command";
 export interface ICommandInfoStorage {
     addNewCommands(commandsInfo: ICommandInformation[]): Promise<ICommandInformation[]>;
     findCommandInfoByNames(names: CommandNames[]): Promise<ICommandInformation[]>;
-    updateCommandInfo(commandInfo: ICommandInformation): Promise<void>
+    updateCommandInfo(commandInfo: ICommandInformation): Promise<void>;
+    getAllCommands(): Promise<ICommandInformation[]>;
 }
 
 export class CommandInfoStorage implements ICommandInfoStorage {
-    constructor(private commandInfoModel: Model<ICommandInformationMongoModel> = defaultCommandInfoModel) {}
+    constructor(private commandInfoModel: Model<ICommandInformationMongoModel> = defaultCommandInfoModel) { }
 
     async addNewCommands(commandsInfo: ICommandInformation[]): Promise<ICommandInformation[]> {
-        const existingCommands = await (await this.findCommandInfoByNames(commandsInfo.map((info) => info.name))).map(info => info.name);
+        const existingCommands = (await this.findCommandInfoByNames(commandsInfo.map((info) => info.name))).map(info => info.name);
         commandsInfo = commandsInfo.filter(info => !existingCommands.includes(info.name));
         return this.commandInfoModel.insertMany(commandsInfo);
     }
@@ -24,6 +25,10 @@ export class CommandInfoStorage implements ICommandInfoStorage {
 
     updateCommandInfo(commandInfo: ICommandInformation): Promise<void> {
         return this.commandInfoModel.updateOne({ name: commandInfo.name }, { $set: commandInfo }).exec();
+    }
+
+    getAllCommands() {
+        return this.commandInfoModel.find({}).lean().exec();
     }
 }
 

@@ -5,8 +5,9 @@ import { DiscordCommandReader } from "../discord/CommandReader";
 import { ChatHistory } from "../appInterfaces/ChatHistory";
 import { DiscordChatHistory } from "../discord/ChatHistory";
 import { ICommandProcessor } from "../appInterfaces/ICommandProcessor";
-import { CommandProcessor } from "../bussiness/process-commands/command.procesor";
+import { CommandProcessor } from "../business/process-commands/command.procesor";
 import AppClient from "../discord/DiscordClient";
+import { getLowestDistanceCommandsFromString } from "../helpers/levenshtein-distance";
 
 
 type processedOrder = { name: string, order: string };
@@ -15,7 +16,16 @@ const chatHistoryService: ChatHistory = new DiscordChatHistory(AppClient);
 const commandProcessor: ICommandProcessor = new CommandProcessor();
 
 export function register() {
-    AppBot.on(CommandNames.unknown, c => c.channel.sendMessage("Unrecognized command!"))
+    AppBot.on(CommandNames.unknown, async c => {
+        const commandName = c.rawInvocation.split(' ')[0].substring(1);
+        let possibleCommands = getLowestDistanceCommandsFromString(commandName);
+        if (possibleCommands.length > 0) {
+            await c.channel.sendMessage("Heeey looks like you might have made a mistake :), did you mean any of these: ");
+            for (let command of possibleCommands) await c.channel.sendMessage(` - !${command}`);
+            await c.channel.sendMessage("If not sorrryy, my mistake :)");
+        }
+        else c.channel.sendMessage("Unrecognized command!")
+    })
 
     AppBot.on(CommandNames.createPollFromURL, async c => {
         let { meals, restaurantName } = await commandProcessor.parseURLFoodData(c.params);
