@@ -13,6 +13,7 @@ export class Bot {
   discordCommands: CommandReader;
   // chatHistoryService: ChatHistory;
   commandProcessor: ICommandProcessor;
+  botClientId!: string;
 
   constructor(
     client: Discord.Client,
@@ -24,13 +25,20 @@ export class Bot {
     this.discordCommands = discordCommands;
     // this.chatHistoryService = chatHistoryService;
     this.commandProcessor = commandProcessor;
+    this.client.on("ready", () => this.botClientId = this.client.user.id)
+
 
     this.discordCommands.registerCommandNames([...Object.values(CommandNames)])
     this.discordCommands.commands.subscribe(c => {
-      this.registeredHandlers[c.name].forEach(handler => handler(c));
+      return this.runCommand(c);
     })
   }
 
+  runCommand(c: Command) {
+    const resp: any[] = [];
+    this.registeredHandlers[c.name].forEach(handler => resp.push(handler(c)));
+    return resp;
+  }
   registeredHandlers: BotCommandHandles = {};
 
   on(commandName: CommandNames, handler: (command: Command) => any): void {

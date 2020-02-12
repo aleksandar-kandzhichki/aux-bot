@@ -1,2 +1,17 @@
 <h1>HOME</h1>
 <h2>WELCOME</h2>
+
+<form style="display: flex; flex-direction: column; margin: auto; width: 20%;" ngForm #form="ngForm"
+    (submit)="submit(form)" class="example-container">
+    <h3> Summarize </h3>
+    <div>
+        <p *ngFor="let str of summarized"> {{str}} </p>
+    </div>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Input</mat-label>
+        <input matInput [(ngModel)]="fromMenu" required name="frommenu">
+    </mat-form-field>
+
+    <button mat-button mat-raised-button type="submit">Summarize!</button>
+</form>

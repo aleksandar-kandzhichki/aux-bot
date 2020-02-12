@@ -68,7 +68,7 @@ export function register() {
 
         c.channel.sendMessage(Object.keys(grouped).map(k => `${grouped[k]}x ${k}`).join('  \n'));
 
-        return;
+        return Object.keys(grouped).map(k => `${grouped[k]}x ${k}`);
     })
 
     AppBot.on(CommandNames.summarizePoll, async c => {
