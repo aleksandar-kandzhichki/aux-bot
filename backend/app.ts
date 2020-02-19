@@ -9,7 +9,7 @@ import * as express from 'express';
 
 mongoConnect();
 
-const port = 3000;
+const port = 3001;
 
 const app = express.default();
 app.use(bodyParser.json());
