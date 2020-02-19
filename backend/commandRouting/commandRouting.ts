@@ -14,7 +14,6 @@ type processedOrder = { name: string, order: string };
 const discordCommands = new DiscordCommandReader(AppClient);
 const chatHistoryService: ChatHistory = new DiscordChatHistory(AppClient);
 const commandProcessor: ICommandProcessor = new CommandProcessor();
-const lunchDisabledHour = 13;
 
 export function register() {
     AppBot.on(CommandNames.unknown, async c => {
@@ -50,11 +49,6 @@ export function register() {
     })
     AppBot.on(CommandNames.test2, c => (new DiscrodPolls(chatHistoryService, AppClient)).reset('', '', [], c.channel))
     AppBot.ons([CommandNames.lunch, CommandNames.summary], async c => {
-        const hour = new Date().getHours();
-        if (hour >= lunchDisabledHour) {
-            c.channel.sendMessage(`Sorry, too late for lunch!`);
-            return;
-        }
         c.channel.sendMessage("Summaryzing from messages!!!")
         let history = (await chatHistoryService.getLastN(100, c.channel)).filter(msg => !discordCommands.isBotInvocation(msg.content) && !msg.author.bot);
         let fromDate = new Date();
