@@ -19,10 +19,7 @@
             "cwd": "${workspaceFolder}/backend",
             "sourceMaps": true,
             "console": "internalConsole",
-            "skipFiles": [
-                "<node_internals>/**",
-                "${workspaceFolder}/backend/node_modules/**"
-            ]
+            "skipFiles": []
         },
         {
             "type": "node",
@@ -38,7 +35,7 @@
                 "<node_internals>/**",
                 "${workspaceFolder}/backend/node_modules/**"
             ],
-            "args":[]
+            "args": []
         },
     ]
 }

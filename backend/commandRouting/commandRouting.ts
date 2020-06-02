@@ -8,12 +8,15 @@ import { ICommandProcessor } from "../appInterfaces/ICommandProcessor";
 import { CommandProcessor } from "../business/process-commands/command.procesor";
 import AppClient from "../discord/DiscordClient";
 import { getLowestDistanceCommandsFromString } from "../helpers/levenshtein-distance";
+import { Message, Collection } from "discord.js";
 
 
 type processedOrder = { name: string, order: string };
 const discordCommands = new DiscordCommandReader(AppClient);
 const chatHistoryService: ChatHistory = new DiscordChatHistory(AppClient);
 const commandProcessor: ICommandProcessor = new CommandProcessor();
+
+const emptyMessage = { embeds: new Collection(), attachments: new Collection(), mentions: new Collection(), reactions: new Collection() }
 
 export function register() {
     AppBot.on(CommandNames.unknown, async c => {
@@ -51,10 +54,23 @@ export function register() {
     AppBot.ons([CommandNames.lunch, CommandNames.summary], async c => {
         c.channel.sendMessage("Summaryzing from messages!!!")
         let history = (await chatHistoryService.getLastN(100, c.channel)).filter(msg => !discordCommands.isBotInvocation(msg.content) && !msg.author.bot);
+        history = history.reduce(
+            (acc, curr) =>
+                ([
+                    ...acc,
+                    ...curr.content.split('\n').map(content => {
+                        const newMsg = new Message(curr.channel,
+                            { ...curr, id: curr.id, author: curr.author, ...emptyMessage, content, timestamp: curr.createdTimestamp }, curr.client
+                        );
+                        // newMsg.edit(content);
+                        return newMsg
+                    })
+                ]), [] as Message[])
+
         let fromDate = new Date();
         if (c.params.from) {
             c.params.from = (c.params.from as string).toLowerCase();
-            history = history.filter(msg => msg.content.toLowerCase().includes(c.params.from as string))
+            history = history.filter(msg => msg.content.toLowerCase().startsWith(c.params.from as string))
         }
         if (c.params.date) fromDate = new Date(Date.parse(c.params.date as string));
 
