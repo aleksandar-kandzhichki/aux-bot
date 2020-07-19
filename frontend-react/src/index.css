@@ -77,6 +77,7 @@ a {
   max-width: 460px;
   display: flex;
   margin: 0 auto 32px;
+  padding-bottom: 100px;
 }
 
 .search-form button {
@@ -85,6 +86,10 @@ a {
   padding: 0px 15px;
   border-radius: 0 0.35em 0.35em 0;
   cursor: pointer;
+}
+
+.command-name {
+  line-height: 43px;
 }
 
 .active {
@@ -110,7 +115,7 @@ input {
 
 .main-nav a {
   display: block;
-  background: #051c33;
+  background: #051c33b9;
   border-radius: 3px;
   padding: 5px;
   color: #fff;

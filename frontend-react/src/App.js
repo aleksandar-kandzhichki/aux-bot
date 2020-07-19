@@ -1,16 +1,10 @@
 import React, { Component } from "react";
-import PhotoContextProvider from "./context/PhotoContext";
 import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 import Header from "./components/Header";
-import Item from "./components/Item";
 import Search from "./components/Search";
 import NotFound from "./components/NotFound";
-// import { initialAvailableCommands } from "./context/CommandContext";
-export const initialAvailableCommands = [
-  { name: "summary", displayName: "Summary" },
-  { name: "poll", displayName: "Poll" },
-  { name: "help", displayName: "Help" }
-]
+import CommandsContextProvider from "./context/CommandContext";
+import CommandAction from "./components/Commands/CommandAction";
 
 class App extends Component {
   // Prevent page reload, clear input, set URL and push history on submit
@@ -23,48 +17,40 @@ class App extends Component {
 
   render() {
     return (
-      <PhotoContextProvider>
-        <HashRouter basename="/SnapScout">
+      <CommandsContextProvider>
+        <HashRouter basename="/commands">
           <div className="container">
-            <Route
+            <Route path="/:commandName"
               render={props => (
                 <Header
                   handleSubmit={this.handleSubmit}
                   history={props.history}
+                  commandName={props.match.params.commandName}
                 />
               )}
             />
+
+
             <Switch>
               <Route
                 exact
                 path="/"
-                render={() => <Redirect to={initialAvailableCommands[0].name} />}
+                render={() => <Redirect to="all" />}
               />
-
-              {
-                initialAvailableCommands.map(c =>
-                  <Route path={"/" + c.name}
-                    render={() => <Item searchTerm={c.displayName} />}
-                  />)
-              }
+              <Route exact path="/:commandName/actions/:actionName"
+                render={props => <CommandAction actionName={props.match.params.actionName} commandName={props.match.params.commandName}></CommandAction>}
+              />
               {/* <Route
-                path="/mountain"
-                render={() => <Item searchTerm="mountain" />}
-              />
-              <Route path="/beach" render={() => <Item searchTerm="beach" />} />
-              <Route path="/bird" render={() => <Item searchTerm="bird" />} />
-              <Route path="/food" render={() => <Item searchTerm="food" />} /> */}
-              <Route
                 path="/search/:searchInput"
                 render={props => (
                   <Search searchTerm={props.match.params.searchInput} />
                 )}
-              />
+              /> */}
               <Route component={NotFound} />
             </Switch>
           </div>
         </HashRouter>
-      </PhotoContextProvider>
+      </CommandsContextProvider>
     );
   }
 }

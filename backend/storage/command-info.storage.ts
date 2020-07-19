@@ -19,6 +19,13 @@ export class CommandInfoStorage implements ICommandInfoStorage {
         return this.commandInfoModel.insertMany(commandsInfo);
     }
 
+    getCommand(commandName: string, action: string) {
+        if (action == "run") {
+            return this.commandInfoModel.find({ name: commandName }).lean().exec();
+        }
+        throw new Error("unrecognized action");
+    }
+
     findCommandInfoByNames(names: CommandNames[]): Promise<ICommandInformation[]> {
         return this.commandInfoModel.find({ name: { $in: names } }).lean().exec();
     }

@@ -1,19 +1,53 @@
 import React, { createContext, useState } from "react";
+import axios from "axios";
+
 export const CommandsContext = createContext();
-export const availableCommands = [
-    { name: "summary", displayName: "Summary" },
-    { name: "poll", displayName: "Poll" },
+export const commandActions = [
+    { name: "run", displayName: "Run" },
+    { name: "watch", displayName: "Watch" },
+    { name: "schedule", displayName: "Schedule" },
     { name: "help", displayName: "Help" }
 ]
 
 const CommandsContextProvider = props => {
-    // const [availableCommands, setAvailableCommands] = useState([
-    //     { name: "summary", displayName: "Summary" },
-    //     { name: "poll", displayName: "Poll" },
-    //     { name: "help", displayName: "Help" }
-    // ]);
+    const [availableCommands, setAvailableCommands] = useState([
+        { name: "summary", displayName: "Summary" },
+        { name: "poll", displayName: "Poll" },
+        { name: "help", displayName: "Help" }
+    ]);
+    const [commandData, setCommandData] = useState({})
+
+    const [loading, setLoading] = useState(false);
+    const [currentCommand, setCurrentCommand] = useState("all");
+    const [currentAction, setCurrentAction] = useState(undefined);
+
+    const searchWatchCommand = query => {
+        axios
+            .get(
+                `https://api/commands/watch`
+            )
+            .then(response => {
+                setAvailableCommands(response.data.commands);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.log(
+                    "Encountered an error with fetching and parsing data",
+                    error
+                );
+            });
+    };
+
+    const getCommand = (commandName, commandAction) => {
+        axios.get(`/api/commands/${commandName}/actions/${commandAction}`)
+            .then(r => {
+                setCommandData(r);
+                setLoading(false)
+            }).catch(e => console.error(e));
+    }
+
     return (
-        <CommandsContext.Provider value={{}}>
+        <CommandsContext.Provider value={{ availableCommands, loading, searchWatchCommand, currentCommand, setCurrentCommand, getCommand, setCurrentAction }}>
             {props.children}
         </CommandsContext.Provider>
     );

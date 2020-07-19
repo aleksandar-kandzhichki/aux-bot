@@ -1,18 +1,19 @@
 import React, { useContext, useEffect } from "react";
-import { PhotoContext } from "../context/PhotoContext";
+import { CommandsContext } from "../context/CommandContext";
 import Gallery from "./Gallery";
 import Loader from "./Loader";
 
 const Container = ({ searchTerm }) => {
-  const { images, loading, runSearch } = useContext(PhotoContext);
+  console.log(useContext(CommandsContext))
+  const { availableCommands, searchWatchCommand, loading } = useContext(CommandsContext);
   useEffect(() => {
-    runSearch(searchTerm);
+    searchWatchCommand(searchTerm);
     // eslint-disable-next-line
   }, [searchTerm]);
 
   return (
     <div className="photo-container">
-      {loading ? <Loader /> : <Gallery data={images} />}
+      {loading ? <Loader /> : <Gallery data={availableCommands} />}
     </div>
   );
 };
