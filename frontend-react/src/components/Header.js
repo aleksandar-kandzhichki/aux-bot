@@ -12,7 +12,7 @@ const Header = ({ history, handleSubmit, commandName }) => {
 
   return (
     <div>
-      <h1>{(!!commandName && commandName === "all") ? "Commands" : ("Command" + commandName)}</h1>
+      <h1>{(!!commandName && commandName === "all") ? "Commands" : ("Command < " + commandName + " >")}</h1>
       {/* <Form history={history} handleSubmit={handleSubmit} /> */}
       <ListCommands></ListCommands>
       {commandName != "all" ? <ListActions commandName={commandName}></ListActions> : ''}

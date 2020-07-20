@@ -41,13 +41,20 @@ const CommandsContextProvider = props => {
     const getCommand = (commandName, commandAction) => {
         axios.get(`/api/commands/${commandName}/actions/${commandAction}`)
             .then(r => {
-                setCommandData(r);
+                setCommandData(r.data[0]);
+                setLoading(false)
+            }).catch(e => console.error(e));
+    }
+
+    const executeCommand = (commandName, data) => {
+        axios.post(`/api/commands/${commandName}/execute`, data)
+            .then(r => {
                 setLoading(false)
             }).catch(e => console.error(e));
     }
 
     return (
-        <CommandsContext.Provider value={{ availableCommands, loading, searchWatchCommand, currentCommand, setCurrentCommand, getCommand, setCurrentAction }}>
+        <CommandsContext.Provider value={{ availableCommands, loading, searchWatchCommand, currentCommand, setCurrentCommand, getCommand, setCurrentAction, commandData, executeCommand }}>
             {props.children}
         </CommandsContext.Provider>
     );
