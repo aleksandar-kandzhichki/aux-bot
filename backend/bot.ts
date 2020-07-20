@@ -34,7 +34,7 @@ export class Bot {
     })
   }
 
-  runCommand(c: Command) {
+  runCommand(c: Command): Promise<any>[] {
     const resp: any[] = [];
     this.registeredHandlers[c.name].forEach(handler => resp.push(handler(c)));
     return resp;

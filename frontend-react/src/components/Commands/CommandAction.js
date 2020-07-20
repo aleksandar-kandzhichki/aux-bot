@@ -16,7 +16,7 @@ const CommandAction = ({ commandName, actionName }) => {
         const form = ev.currentTarget;
         const data = [...form.querySelectorAll("input")].reduce((acc, el) => { acc[el.name] = el.value; return acc }, {});
 
-        executeCommand(data);
+        executeCommand(currentCommand, data);
         return false;
     }
     const test = (...args) => {

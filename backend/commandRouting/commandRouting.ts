@@ -52,7 +52,7 @@ export function register() {
     })
     AppBot.on(CommandNames.test2, c => (new DiscrodPolls(chatHistoryService, AppClient)).reset('', '', [], c.channel))
     AppBot.ons([CommandNames.lunch, CommandNames.summary], async c => {
-        c.channel.sendMessage("Summaryzing from messages!!!")
+        c.channel.sendMessage(`Summaryzing for ${c.params.from}`)
         let history = (await chatHistoryService.getLastN(100, c.channel)).filter(msg => !discordCommands.isBotInvocation(msg.content) && !msg.author.bot);
         history = history.reduce(
             (acc, curr) =>

@@ -47,7 +47,7 @@ const CommandsContextProvider = props => {
     }
 
     const executeCommand = (commandName, data) => {
-        axios.post(`/api/commands/${commandName}/execute`, data)
+        axios.post(`/api/commands/${commandName}/actions/run`, data)
             .then(r => {
                 setLoading(false)
             }).catch(e => console.error(e));
