@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { commandActions, CommandsContext } from "../../context/CommandContext";
+import { pollUpdate } from '../../ws.service'
 
 const CommandAction = ({ commandName, actionName }) => {
-    const { getCommand, currentCommand, commandData, executeCommand } = useContext(CommandsContext);
+    const { getCommand, currentCommand, commandData, executeCommand, currentAction, watchPoll } = useContext(CommandsContext);
     useEffect(() => {
         getCommand(commandName, actionName);
         // eslint-disable-next-line
@@ -16,15 +17,15 @@ const CommandAction = ({ commandName, actionName }) => {
         const form = ev.currentTarget;
         const data = [...form.querySelectorAll("input")].reduce((acc, el) => { acc[el.name] = el.value; return acc }, {});
 
-        executeCommand(currentCommand, data);
+        if (currentAction == "run")
+            executeCommand(currentCommand, data);
+        else if (currentAction == "watch")
+            watchPoll(data.pollId);
         return false;
     }
-    const test = (...args) => {
-        console.log(args);
-    }
     return (
-        <form onSubmit={submitForm} onChange={test}>
-            {(!commandData || !commandData.params) ? '' :
+        <form onSubmit={submitForm}>
+            {(currentAction != "run" || !commandData || !commandData.params) ? '' :
                 commandData.params.map(
                     p =>
                         <div className={'form-control'}>
@@ -32,7 +33,10 @@ const CommandAction = ({ commandName, actionName }) => {
                             <input type={p.type} defaultValue={p.default} name={p.name}></input>
                         </div>
                 )}
-            <button type="submit">Run</button>
+            {
+                (currentAction == "watch" && commandName == "poll") ? <input name="pollId" placeholder="Poll ID"></input> : ''
+            }
+            <button type="submit">{currentAction == "watch" ? "Warch" : "Run"}</button>
         </form>
         // <p>Data for <b>{commandData ? JSON.stringify(commandData) : 'unknown command'}</b>: </p>
     );

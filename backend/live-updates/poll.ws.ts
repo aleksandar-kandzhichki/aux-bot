@@ -12,15 +12,31 @@ class PollListeners {
         else this.data[pollId]!.sockets.push(socket);
     }
 
-    sendPollUpdate(pollId: string, data: PollSummary) {
+    // removeListener(pollId) 
+
+    sendPollUpdate(pollId: string, data?: PollSummary) {
         const listeners = this.getListeners(pollId).sockets
         if (listeners.length == 0) return;
+
+        if (!data) data = this.getListeners(pollId).lastUpdate;
 
         listeners.forEach(l => l.send({ type: "watch-update", pollId, data }))
     }
 
     getListeners(pollId: string) {
         return this.data[pollId] || { lastUpdate: {}, sockets: [] };
+    }
+
+    addReactionToPoll(pollId: string, reaction: any) {
+        this.getListeners(pollId).lastUpdate[reaction] = (this.getListeners(pollId).lastUpdate[reaction] || 0) + 1;
+
+        this.sendPollUpdate(pollId);
+    }
+
+    removeReactionFromPoll(pollId: string, reaction: any) {
+        this.getListeners(pollId).lastUpdate[reaction] = (this.getListeners(pollId).lastUpdate[reaction] || 1) - 1;
+
+        this.sendPollUpdate(pollId);
     }
 }
 

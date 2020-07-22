@@ -1,5 +1,6 @@
 import React, { createContext, useState } from "react";
 import axios from "axios";
+import { pollUpdate, watchPollUpdates } from '../ws.service'
 
 export const CommandsContext = createContext();
 export const commandActions = [
@@ -20,6 +21,7 @@ const CommandsContextProvider = props => {
     const [loading, setLoading] = useState(false);
     const [currentCommand, setCurrentCommand] = useState("all");
     const [currentAction, setCurrentAction] = useState(undefined);
+    const [pollData, setPollData] = useState({});
 
     const searchWatchCommand = query => {
         axios
@@ -53,8 +55,16 @@ const CommandsContextProvider = props => {
             }).catch(e => console.error(e));
     }
 
+    const watchPoll = (pollId) => {
+        watchPollUpdates(pollId);
+
+        pollUpdate.subscribe(data => {
+            setPollData(data);
+        })
+    }
+
     return (
-        <CommandsContext.Provider value={{ availableCommands, loading, searchWatchCommand, currentCommand, setCurrentCommand, getCommand, setCurrentAction, commandData, executeCommand }}>
+        <CommandsContext.Provider value={{ availableCommands, loading, searchWatchCommand, currentCommand, setCurrentCommand, getCommand, currentAction, setCurrentAction, commandData, executeCommand, watchPoll }}>
             {props.children}
         </CommandsContext.Provider>
     );

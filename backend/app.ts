@@ -8,6 +8,8 @@ import scheduledMessageRouter from "./routing/scheduled-messages.routes";
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import config from "./config";
+import { openWs } from './live-updates/ws';
+import * as http from 'http';
 
 mongoConnect();
 
@@ -21,5 +23,9 @@ app.use(scheduledMessageRouter);
 app.use(urlInfoRouter);
 app.use(userRoutes);
 
-app.listen(port, () => console.log(`Listening on port ${port}!`))
+// app.listen(port, () => console.log(`Listening on port ${port}!`))
+var server = http.createServer(app);
+
+openWs(server);
+server.listen(port);
 register();

@@ -8,7 +8,8 @@ import { ICommandProcessor } from "../appInterfaces/ICommandProcessor";
 import { CommandProcessor } from "../business/process-commands/command.procesor";
 import AppClient from "../discord/DiscordClient";
 import { getLowestDistanceCommandsFromString } from "../helpers/levenshtein-distance";
-import { Message, Collection } from "discord.js";
+import { Message, Collection, TextChannel } from "discord.js";
+import { pollListeners } from "../live-updates/poll.ws";
 
 
 type processedOrder = { name: string, order: string };
@@ -32,8 +33,19 @@ export function register() {
 
     AppBot.on(CommandNames.poll, async c => {
         const data = c.params.pollData;
-        data;
-        throw new Error("poll not implemented yet!");
+        const message = c.params.message;
+        const channelName = c.params.channelName;
+        const pollId = c.params.pollId as string;
+        const channel = AppClient.channels.array().find(channel => channelName == (channel as TextChannel).name) as (TextChannel)
+
+        (await channel.send(message)) as Message;
+        (await channel.send(data)) as Message;
+        AppClient.on('messageReactionAdd', (react, _) => {
+            pollListeners.addReactionToPoll(pollId, react.emoji.toString())
+        })
+        AppClient.on('messageReactionRemove', (react, _) => {
+            pollListeners.removeReactionFromPoll(pollId, react.emoji.toString())
+        })
     })
 
     AppBot.on(CommandNames.createPollFromURL, async c => {
