@@ -36,7 +36,8 @@ export enum CommandNames {
     help = "help",
     test = "test",
     test2 = "proba",
-    createPollFromURL = "createPollFromURL"
+    createPollFromURL = "createPollFromURL",
+    poll = "poll"
 }
 export interface CommandParams {
     [param: string]: string | true;

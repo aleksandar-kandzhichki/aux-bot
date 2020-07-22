@@ -7,10 +7,11 @@ import userRoutes from "./routing/user.routes";
 import scheduledMessageRouter from "./routing/scheduled-messages.routes";
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
+import config from "./config";
 
 mongoConnect();
 
-const port = 3001;
+const port = config.appPort;
 
 const app = express.default();
 app.use(bodyParser.json());

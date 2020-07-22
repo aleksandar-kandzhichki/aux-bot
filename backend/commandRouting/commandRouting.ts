@@ -30,6 +30,12 @@ export function register() {
         else c.channel.sendMessage("Unrecognized command!")
     })
 
+    AppBot.on(CommandNames.poll, async c => {
+        const data = c.params.pollData;
+        data;
+        throw new Error("poll not implemented yet!");
+    })
+
     AppBot.on(CommandNames.createPollFromURL, async c => {
         let { meals, restaurantName } = await commandProcessor.parseURLFoodData(c.params);
         let mappedMeals = meals.map(meal => ({ name: `${meal.mealName}   ${meal.mealPrice}`, voteOptions: ["👍"], votes: [], messageId: '' }));
@@ -72,7 +78,7 @@ export function register() {
             c.params.from = (c.params.from as string).toLowerCase();
             history = history.filter(msg => msg.content.toLowerCase().startsWith(c.params.from as string))
         }
-        if (c.params.date) fromDate = new Date(Date.parse(c.params.date as string));
+        if (c.params.date && c.params.date != 'today') fromDate = new Date(Date.parse(c.params.date as string));
 
         history = history.filter(msg => isSameDay(msg.createdAt, fromDate))
         c.channel.sendMessage(`checking ${history.length} messages... \n\n #Summary: \n\n`);
