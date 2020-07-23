@@ -2,24 +2,20 @@ import React, { useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { commandActions, CommandsContext } from "../../context/CommandContext";
 
-const CommandAction = ({ pollId }) => {
-    const { currentPoll } = useContext(CommandsContext);
-    useEffect(() => {
-        watchPoll(pollId)
-        // eslint-disable-next-line
-    }, [pollId]);
+const WatchPoll = () => {
+    const { pollData } = useContext(CommandsContext);
 
     return (
         <div>
             {
-                currentPoll.map(el => {
+                !!pollData ? Object.keys(pollData.data).map(key =>
                     <div>
-                        <label>{el.name}</label> <span>{el.amount}</span>
+                        <label>{key}</label> <span>{pollData.data[key]}</span>
                     </div>
-                })
+                ) : ''
             }
         </div>
     );
 };
 
-export default CommandAction;
+export default WatchPoll;

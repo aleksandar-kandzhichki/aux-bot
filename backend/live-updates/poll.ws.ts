@@ -20,7 +20,7 @@ class PollListeners {
 
         if (!data) data = this.getListeners(pollId).lastUpdate;
 
-        listeners.forEach(l => l.send({ type: "watch-update", pollId, data }))
+        listeners.forEach(l => l.send(JSON.stringify({ type: "watch-update", pollId, data })))
     }
 
     getListeners(pollId: string) {
@@ -35,6 +35,7 @@ class PollListeners {
 
     removeReactionFromPoll(pollId: string, reaction: any) {
         this.getListeners(pollId).lastUpdate[reaction] = (this.getListeners(pollId).lastUpdate[reaction] || 1) - 1;
+        if (this.getListeners(pollId).lastUpdate[reaction] == 0) delete this.getListeners(pollId).lastUpdate[reaction];
 
         this.sendPollUpdate(pollId);
     }
@@ -46,5 +47,5 @@ clientMessage.pipe(filter(({ data }) => {
     return (data.type == "watch" && !!data.pollId)
 })).subscribe(({ data, socket }) => {
     pollListeners.addListener(data.pollId!, socket);
-    socket.send(SocketMessage.PollUpdate(data.pollId!, pollListeners.getListeners(data.pollId!).lastUpdate));
+    SocketMessage.PollUpdate(data.pollId!, pollListeners.getListeners(data.pollId!).lastUpdate).sendToSocket(socket);
 })

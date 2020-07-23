@@ -28,10 +28,14 @@ export class SocketMessage {
     data: any;
     pollId?: string;
 
-    constructor(other: SocketMessage) {
+    constructor(other: Partial<SocketMessage>) {
         this.type = other.type;
         this.data = other.data;
         this.pollId = other.pollId;
+    }
+
+    sendToSocket(socket: WebSocket) {
+        socket.send(JSON.stringify(this));
     }
 
     static PollUpdate(pollId: string, data: any) {

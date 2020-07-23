@@ -2,11 +2,13 @@ import React, { useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { commandActions, CommandsContext } from "../../context/CommandContext";
 import { pollUpdate } from '../../ws.service'
+import WatchPoll from './WatchPoll'
 
 const CommandAction = ({ commandName, actionName }) => {
     const { getCommand, currentCommand, commandData, executeCommand, currentAction, watchPoll } = useContext(CommandsContext);
     useEffect(() => {
         getCommand(commandName, actionName);
+        resetForm();
         // eslint-disable-next-line
     }, [commandName, actionName]);
 
@@ -23,8 +25,13 @@ const CommandAction = ({ commandName, actionName }) => {
             watchPoll(data.pollId);
         return false;
     }
+
+    const resetForm = () => {
+        document.getElementById("command-action-form").reset();
+    }
+
     return (
-        <form onSubmit={submitForm}>
+        <form id="command-action-form" onSubmit={submitForm}>
             {(currentAction != "run" || !commandData || !commandData.params) ? '' :
                 commandData.params.map(
                     p =>
@@ -34,7 +41,12 @@ const CommandAction = ({ commandName, actionName }) => {
                         </div>
                 )}
             {
-                (currentAction == "watch" && commandName == "poll") ? <input name="pollId" placeholder="Poll ID"></input> : ''
+                (currentAction == "watch" && commandName == "poll") ?
+                    <div>
+                        <input name="pollId" placeholder="Poll ID"></input>
+                        <WatchPoll></WatchPoll>
+                    </div>
+                    : ''
             }
             <button type="submit">{currentAction == "watch" ? "Warch" : "Run"}</button>
         </form>

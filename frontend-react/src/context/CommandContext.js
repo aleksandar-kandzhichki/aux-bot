@@ -21,7 +21,7 @@ const CommandsContextProvider = props => {
     const [loading, setLoading] = useState(false);
     const [currentCommand, setCurrentCommand] = useState("all");
     const [currentAction, setCurrentAction] = useState(undefined);
-    const [pollData, setPollData] = useState({});
+    const [pollData, setPollData] = useState(undefined);
 
     const searchWatchCommand = query => {
         axios
@@ -64,7 +64,7 @@ const CommandsContextProvider = props => {
     }
 
     return (
-        <CommandsContext.Provider value={{ availableCommands, loading, searchWatchCommand, currentCommand, setCurrentCommand, getCommand, currentAction, setCurrentAction, commandData, executeCommand, watchPoll }}>
+        <CommandsContext.Provider value={{ availableCommands, loading, searchWatchCommand, currentCommand, setCurrentCommand, getCommand, currentAction, setCurrentAction, commandData, executeCommand, watchPoll, pollData }}>
             {props.children}
         </CommandsContext.Provider>
     );
