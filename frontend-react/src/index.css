@@ -238,3 +238,14 @@ input {
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
   }
 }
+
+
+
+form {
+  max-width: 600px;
+  margin: auto;
+}
+
+form input {
+  margin-bottom: 20px;
+}

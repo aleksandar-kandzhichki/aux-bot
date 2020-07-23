@@ -1,11 +1,14 @@
 import React, { Component } from "react";
-import { HashRouter, Route, Switch, Redirect, Router } from "react-router-dom";
+import { HashRouter, Route, Switch, Redirect, Router, BrowserRouter } from "react-router-dom";
 import Header from "./components/Header";
 import Search from "./components/Search";
 import NotFound from "./components/NotFound";
 import CommandsContextProvider from "./context/CommandContext";
 import CommandAction from "./components/Commands/CommandAction";
 import UsersContextProvider from "./context/UsersContext";
+import Login from "./components/Users/Login";
+import Profile from "./components/Users/Profile";
+import Register from "./components/Users/Register";
 
 class App extends Component {
   // Prevent page reload, clear input, set URL and push history on submit
@@ -18,59 +21,65 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <CommandsContextProvider>
-          <HashRouter exact basename="/commands">
-            <div className="container">
-              <Route path="/:commandName"
-                render={props => (
-                  <Header
-                    handleSubmit={this.handleSubmit}
-                    history={props.history}
-                    commandName={props.match.params.commandName}
+      <BrowserRouter>
+        <span class="forkongithub"><a id="user-banner" href="https://github.com/Yog9/SnapShot">Fork me on GitHub</a></span>
+        <Switch>
+
+          <Route path="/commands">
+            <CommandsContextProvider>
+              <BrowserRouter exact basename="/commands">
+                <div className="container">
+                  <Route path="/:commandName"
+                    render={props => (
+                      <Header
+                        handleSubmit={this.handleSubmit}
+                        history={props.history}
+                        commandName={props.match.params.commandName}
+                      />
+                    )}
                   />
-                )}
-              />
 
 
-              <Switch>
-                <Route
-                  exact
-                  path="/"
-                  render={() => <Redirect to="all" />}
-                />
-                <Route exact path="/:commandName/actions/:actionName"
-                  render={props => <CommandAction actionName={props.match.params.actionName} commandName={props.match.params.commandName}></CommandAction>}
-                />
-                {/* <Route
-                path="/search/:searchInput"
-                render={props => (
-                  <Search searchTerm={props.match.params.searchInput} />
-                )}
-              /> */}
-                <Route component={NotFound} />
-              </Switch>
-            </div>
-          </HashRouter>
-        </CommandsContextProvider>
+                  <Switch>
+                    <Route
+                      exact
+                      path="/"
+                      render={() => <Redirect to="all" />}
+                    />
+                    <Route exact path="/:commandName/actions/:actionName"
+                      render={props => <CommandAction actionName={props.match.params.actionName} commandName={props.match.params.commandName}></CommandAction>}
+                    />
+                    <Route component={NotFound} />
+                  </Switch>
+                </div>
+              </BrowserRouter>
+            </CommandsContextProvider>
+          </Route>
 
-        <UsersContextProvider>
-          <HashRouter exact basename="/users">
-            <Switch>
-              <Route exact path="/login">
-                <h1> LOGIN </h1>
-              </Route>
-              <Router exact path="/profile">
-                <h1> PROFILE </h1>
-              </Router>
-              <Router exact path="/register">
-                <h1> REGISTER </h1>
-              </Router>
-              {/* <Redirect to="/login"></Redirect> */}
-            </Switch>
-          </HashRouter>
-        </UsersContextProvider>
-      </div>
+          <Route path="/users">
+            <UsersContextProvider>
+              <BrowserRouter exact basename="/users">
+                <Switch>
+                  <Route path="/login">
+                    <h1> LOGIN </h1>
+                    <Login></Login>
+                  </Route>
+                  <Route path="/profile">
+                    <h1> PROFILE </h1>
+                    <Profile></Profile>
+                  </Route>
+                  <Route path="/register">
+                    <h1> REGISTER </h1>
+                    <Register></Register>
+                  </Route>
+                  <Redirect to="/login"></Redirect>
+                </Switch>
+              </BrowserRouter>
+            </UsersContextProvider>
+          </Route>
+
+        </Switch>
+      </BrowserRouter>
     );
   }
 }
