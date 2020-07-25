@@ -249,3 +249,9 @@ form {
 form input {
   margin-bottom: 20px;
 }
+
+form label {
+  text-align: left;
+  display: inline-block;
+  width: 100%;
+}

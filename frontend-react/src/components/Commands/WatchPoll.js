@@ -10,7 +10,7 @@ const WatchPoll = () => {
             {
                 !!pollData ? Object.keys(pollData.data).map(key =>
                     <div>
-                        <label>{key}</label> <span>{pollData.data[key]}</span>
+                        <span>{key}</span> <span>{pollData.data[key]}</span>
                     </div>
                 ) : ''
             }

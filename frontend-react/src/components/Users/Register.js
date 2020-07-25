@@ -21,8 +21,13 @@ const Register = () => {
             :
 
             <form onSubmit={submit}>
+                <label>Email</label>
                 <input name="email"></input>
+
+                <label>Password</label>
                 <input name="password" type="password"></input>
+
+                <label>Repeat password</label>
                 <input name="confirmPassword" type="password"></input>
                 <button> Register </button>
             </form>

@@ -41,6 +41,7 @@ const CommandsContextProvider = props => {
     };
 
     const getCommand = (commandName, commandAction) => {
+        if (commandAction != "watch") commandAction = "run";
         axios.get(`/api/commands/${commandName}/actions/${commandAction}`)
             .then(r => {
                 setCommandData(r.data[0]);

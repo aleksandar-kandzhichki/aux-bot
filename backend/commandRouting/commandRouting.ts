@@ -32,14 +32,17 @@ export function register() {
     })
 
     AppBot.on(CommandNames.poll, async c => {
-        const data = c.params.pollData;
+        const data = JSON.parse(c.params.pollData as any);
         const message = c.params.message;
         const channelName = c.params.channelName;
         const pollId = c.params.pollId as string;
         const channel = AppClient.channels.array().find(channel => channelName == (channel as TextChannel).name) as (TextChannel)
 
         (await channel.send(message)) as Message;
-        (await channel.send(data)) as Message;
+
+        for (let itemKey in data) {
+            (await channel.send(`${itemKey}: ${data[itemKey]}`)) as Message;
+        }
         AppClient.on('messageReactionAdd', (react, _) => {
             pollListeners.addReactionToPoll(pollId, react.emoji.toString())
         })

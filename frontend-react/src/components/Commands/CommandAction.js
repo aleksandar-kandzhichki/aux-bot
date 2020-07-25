@@ -48,7 +48,29 @@ const CommandAction = ({ commandName, actionName }) => {
                     </div>
                     : ''
             }
-            <button type="submit">{currentAction == "watch" ? "Warch" : "Run"}</button>
+            {
+                (currentAction == "help") ?
+                    <div>
+                        <p>{commandData.help}</p>
+                    </div> : ""
+            }
+            {
+                (currentAction == "schedule") ?
+                    <div>
+                        <label>Trigger</label>
+                        <input name="trigger"></input>
+                        {commandData.params?.map(
+                            p =>
+                                <div className={'form-control'}>
+                                    <label>{p.name}</label>
+                                    <input type={p.type} defaultValue={p.default} name={p.name}></input>
+                                </div>
+                        )}
+
+                    </div>
+                    : ""
+            }
+            {(currentAction == "watch" || currentAction == "run" || currentAction == "schedule") ? <button type="submit">{currentAction == "watch" ? "Warch" : "Run"}</button> : ""}
         </form>
         // <p>Data for <b>{commandData ? JSON.stringify(commandData) : 'unknown command'}</b>: </p>
     );

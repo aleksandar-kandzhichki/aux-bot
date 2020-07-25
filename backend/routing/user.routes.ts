@@ -17,6 +17,10 @@ router.post('/api/users/login', (req, res) => {
 
 });
 
+router.post('/api/users/register', (_, res) => {
+    res.sendStatus(204);
+});
+
 router.get('/api/commands/summarize/:from', async (req, res) => {
     try {
         const resp = AppBot.runCommand(

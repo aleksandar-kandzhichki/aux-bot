@@ -26,7 +26,8 @@ const UsersContextProvider = props => {
 
 
     const saveUser = (user) => {
-        sessionStorage.setItem("user", JSON.stringify(user));
+        if (user == undefined) sessionStorage.removeItem("user");
+        else sessionStorage.setItem("user", JSON.stringify(user));
         setBanner(user);
     }
     const login = (email, password) => {
@@ -44,6 +45,9 @@ const UsersContextProvider = props => {
                 const user = { ...r, email }
                 setCurrentUser(user);
                 saveUser(user);
+
+
+                window.location.replace("/users/profile");
             }).catch(e => console.error(e));
     }
 
